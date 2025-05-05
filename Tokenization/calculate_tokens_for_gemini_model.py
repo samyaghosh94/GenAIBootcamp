@@ -1,8 +1,10 @@
 import os
 
 import google.generativeai as genai
+from dotenv import load_dotenv
+load_dotenv()
 
-genai.configure(api_key="AIzaSyABtGvfrK1i3K588x4FIYRzzWRR9z7hOjg")
+genai.configure(api_key=os.getenv("GENAI_KEY"))
 image_path = r'C:\Users\samya_ghosh\PycharmProjects\GenAIBootcamp\images\amazon_snapshot.png'
 assert os.path.exists(image_path), f"Test image not found!: {image_path}"
 
