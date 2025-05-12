@@ -1,0 +1,4 @@
+selenium==4.12.0
+pillow==10.0.1
+requests==2.31.0
+python-dotenv==1.0.0  # optional, if you want to manage secrets
