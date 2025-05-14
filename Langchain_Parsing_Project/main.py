@@ -57,9 +57,12 @@ def load_or_parse_documents(screenshot_dir=SCREENSHOT_DIR):
 
 def run_pipeline():
     # Step 1: Optional - Capture new screenshots
-    # print("📸 Capturing screenshots from web app...")
-    # capture_screenshots_for_all_pages()
-    # print("✅ Screenshots captured.\n")
+    print("📸 Capturing screenshots from web app...")
+    if not any(file.lower().endswith(('.png', '.jpg', '.jpeg')) for file in os.listdir(SCREENSHOT_DIR)):
+        print("📂 Screenshot directory is empty. Capturing screenshots...")
+        capture_screenshots_for_all_pages()
+    else:
+        print("📂 Screenshot directory already contains files. Skipping screenshot capture.")
 
     # Step 2–3: Load or parse screenshot documents
     parsed_texts = load_or_parse_documents()
