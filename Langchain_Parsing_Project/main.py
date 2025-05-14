@@ -1,18 +1,22 @@
-import asyncio
 import os
-import time
+import json
+import asyncio
 
 from dotenv import load_dotenv
-from config import SCREENSHOT_DIR
+from config import SCREENSHOT_DIR, DOCSTORE_PATH
 from screenshot_capture import capture_screenshots_for_all_pages
 from parsers.omniparser_client import parse_image_with_retries
-from vectorstore.embed_store import create_vectorstore
 from model.gemini_client import call_gemini_api
-from vectorstore.custom_diallab_retriever import DialLabRetriever
 from vectorstore.custom_diallab_embeddings import DialLabEmbeddings
+from vectorstore.custom_diallab_retriever import DialLabRetriever
+from vectorstore.loader import load_or_build_vectorstore
+
+from langchain.schema import Document
 
 # Load environment variables
 load_dotenv()
+
+# DOCSTORE_PATH = "storage/documents.json"
 
 
 def parse_all_screenshots(screenshot_dir=SCREENSHOT_DIR):
@@ -32,38 +36,63 @@ def parse_all_screenshots(screenshot_dir=SCREENSHOT_DIR):
     return parsed_results
 
 
+def load_or_parse_documents(screenshot_dir=SCREENSHOT_DIR):
+    """
+    Load previously parsed documents from disk, or parse screenshots if not available.
+    """
+    if os.path.exists(DOCSTORE_PATH):
+        print("📄 Loading parsed documents from disk...")
+        with open(DOCSTORE_PATH, "r", encoding="utf-8") as f:
+            texts = [doc["page_content"] for doc in json.load(f)]
+    else:
+        print("🧠 Parsing screenshots with OmniParser...")
+        texts = parse_all_screenshots(screenshot_dir)
+        os.makedirs(os.path.dirname(DOCSTORE_PATH), exist_ok=True)
+        with open(DOCSTORE_PATH, "w", encoding="utf-8") as f:
+            json.dump([{"page_content": text} for text in texts], f)
+        print(f"✅ Parsed and saved {len(texts)} documents.\n")
+
+    return texts
+
+
 def run_pipeline():
-    # Step 1: Capture screenshots
+    # Step 1: Optional - Capture new screenshots
     print("📸 Capturing screenshots from web app...")
-    # capture_screenshots_for_all_pages()
-    print("✅ Screenshots captured.\n")
+    if not any(file.lower().endswith(('.png', '.jpg', '.jpeg')) for file in os.listdir(SCREENSHOT_DIR)):
+        print("📂 Screenshot directory is empty. Capturing screenshots...")
+        capture_screenshots_for_all_pages()
+    else:
+        print("📂 Screenshot directory already contains files. Skipping screenshot capture.")
 
-    # Step 2: Parse screenshots
-    print("🧠 Parsing screenshots with OmniParser...")
-    parsed_texts = parse_all_screenshots()
-    print(f"✅ Parsed {len(parsed_texts)} screenshot(s).\n")
+    # Step 2–3: Load or parse screenshot documents
+    parsed_texts = load_or_parse_documents()
+    if not parsed_texts:
+        print("⚠️ No parsed documents available. Exiting.")
+        return
 
-    # Step 3: Initialize embeddings once
+    # Step 4: Convert to LangChain Documents
+    all_chunks = [Document(page_content=text) for text in parsed_texts]
+
+    # Step 5: Initialize DialLab Embeddings
     embeddings = DialLabEmbeddings(
         model=os.getenv("DIAL_LAB_MODEL", "text-embedding-3-small-1"),
         api_key=os.getenv("DIAL_LAB_KEY"),
         base_url=os.getenv("DIAL_LAB_BASE_URL", "https://ai-proxy.lab.epam.com")
     )
 
-    # Step 4: Create vector store using shared embeddings
-    print("📦 Creating vector store...")
-    vectorstore = create_vectorstore(parsed_texts, embeddings=embeddings)
-    print("✅ Vector store created.\n")
+    # Step 6: Load or build FAISS vectorstore
+    print("📦 Preparing FAISS vectorstore...")
+    vectorstore = load_or_build_vectorstore(all_chunks, embeddings)
+    print("✅ Vectorstore ready.\n")
 
-    # Step 5: Accept user input
+    # Step 7: Accept user query
     print("🤖 Ask your question about the app:")
     user_input = input("> ").strip()
-
     if not user_input:
         print("⚠️ Empty input received. Exiting.")
         return
 
-    # Step 6: Initialize custom retriever
+    # Step 8: Retrieve relevant documents
     retriever = DialLabRetriever(
         model=embeddings.model,
         api_key=embeddings.api_key,
@@ -71,22 +100,21 @@ def run_pipeline():
         faiss_index=vectorstore
     )
 
-    # Step 7: Retrieve documents
-    print("🔎 Retrieving relevant documents using DialLabRetriever...")
+    print("🔎 Retrieving relevant documents...")
     docs = retriever.get_relevant_documents(user_input)
-    semantics = "\n".join([doc.page_content for doc in docs if doc.page_content.strip()])
+    context = "\n".join([doc.page_content for doc in docs if doc.page_content.strip()])
 
-    if not semantics.strip():
-        print("⚠️ No relevant context found for the input. Skipping Gemini call.")
+    if not context.strip():
+        print("⚠️ No relevant context found. Skipping Gemini call.")
         return
 
-    # Step 8: Call Gemini API
+    # Step 9: Call Gemini API
     print("📡 Calling Gemini API...")
-    response = asyncio.run(call_gemini_api(user_input, semantics))
+    model_response = asyncio.run(call_gemini_api(user_input, context))
 
-    # Step 9: Output response
+    # Step 10: Display response
     print("\n💬 Gemini Response:")
-    print(response)
+    print(model_response)
 
 
 if __name__ == "__main__":

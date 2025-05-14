@@ -18,3 +18,6 @@ CHUNK_OVERLAP = 50
 
 # Embedding model configuration
 EMBEDDING_MODEL = 'openai'  # change to 'huggingface' or other if needed
+
+FAISS_INDEX_PATH = "storage/faiss_index.index"
+DOCSTORE_PATH = "storage/documents.json"
