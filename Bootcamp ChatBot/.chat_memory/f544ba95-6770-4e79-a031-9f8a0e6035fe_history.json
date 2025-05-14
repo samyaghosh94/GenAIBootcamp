@@ -1,0 +1,837 @@
+{
+    "session_id": "f544ba95-6770-4e79-a031-9f8a0e6035fe",
+    "messages": [
+        {
+            "type": "human",
+            "data": {
+                "content": "hi",
+                "additional_kwargs": {},
+                "response_metadata": {},
+                "type": "human",
+                "name": null,
+                "id": null,
+                "example": false
+            }
+        },
+        {
+            "type": "ai",
+            "data": {
+                "content": "Hello! How can I assist you today?",
+                "additional_kwargs": {
+                    "refusal": null
+                },
+                "response_metadata": {
+                    "token_usage": {
+                        "completion_tokens": 10,
+                        "prompt_tokens": 8,
+                        "total_tokens": 18,
+                        "completion_tokens_details": {
+                            "accepted_prediction_tokens": 0,
+                            "audio_tokens": 0,
+                            "reasoning_tokens": 0,
+                            "rejected_prediction_tokens": 0
+                        },
+                        "prompt_tokens_details": {
+                            "audio_tokens": 0,
+                            "cached_tokens": 0
+                        }
+                    },
+                    "model_name": "gpt-4o-mini-2024-07-18",
+                    "system_fingerprint": "fp_7a53abb7a2",
+                    "id": "chatcmpl-BWhXsOGyojD0m26dhiQ4ZTM1pk7XO",
+                    "service_tier": null,
+                    "finish_reason": "stop",
+                    "logprobs": null,
+                    "content_filter_results": {}
+                },
+                "type": "ai",
+                "name": null,
+                "id": "run--8aff8688-6418-42fe-892d-3f11010a1a4c-0",
+                "example": false,
+                "tool_calls": [],
+                "invalid_tool_calls": [],
+                "usage_metadata": {
+                    "input_tokens": 8,
+                    "output_tokens": 10,
+                    "total_tokens": 18,
+                    "input_token_details": {
+                        "audio": 0,
+                        "cache_read": 0
+                    },
+                    "output_token_details": {
+                        "audio": 0,
+                        "reasoning": 0
+                    }
+                }
+            }
+        },
+        {
+            "type": "human",
+            "data": {
+                "content": "My name is Rony and yours ?",
+                "additional_kwargs": {},
+                "response_metadata": {},
+                "type": "human",
+                "name": null,
+                "id": null,
+                "example": false
+            }
+        },
+        {
+            "type": "ai",
+            "data": {
+                "content": "Nice to meet you, Rony! I'm an AI and don't have a personal name, but you can call me Assistant. How can I help you today?",
+                "additional_kwargs": {
+                    "refusal": null
+                },
+                "response_metadata": {
+                    "token_usage": {
+                        "completion_tokens": 33,
+                        "prompt_tokens": 33,
+                        "total_tokens": 66,
+                        "completion_tokens_details": {
+                            "accepted_prediction_tokens": 0,
+                            "audio_tokens": 0,
+                            "reasoning_tokens": 0,
+                            "rejected_prediction_tokens": 0
+                        },
+                        "prompt_tokens_details": {
+                            "audio_tokens": 0,
+                            "cached_tokens": 0
+                        }
+                    },
+                    "model_name": "gpt-4o-mini-2024-07-18",
+                    "system_fingerprint": "fp_ded0d14823",
+                    "id": "chatcmpl-BWhYRvY5w53cx447ePn28XAEeKXW1",
+                    "service_tier": null,
+                    "finish_reason": "stop",
+                    "logprobs": null,
+                    "content_filter_results": {}
+                },
+                "type": "ai",
+                "name": null,
+                "id": "run--3abd19bc-c5a3-482c-b4b0-81bc0c37de69-0",
+                "example": false,
+                "tool_calls": [],
+                "invalid_tool_calls": [],
+                "usage_metadata": {
+                    "input_tokens": 33,
+                    "output_tokens": 33,
+                    "total_tokens": 66,
+                    "input_token_details": {
+                        "audio": 0,
+                        "cache_read": 0
+                    },
+                    "output_token_details": {
+                        "audio": 0,
+                        "reasoning": 0
+                    }
+                }
+            }
+        },
+        {
+            "type": "human",
+            "data": {
+                "content": "what is my session id?",
+                "additional_kwargs": {},
+                "response_metadata": {},
+                "type": "human",
+                "name": null,
+                "id": null,
+                "example": false
+            }
+        },
+        {
+            "type": "ai",
+            "data": {
+                "content": "I'm sorry, but I don't have access to session IDs or any personal data about you. I'm designed to prioritize user privacy and confidentiality. If you have any questions or need assistance, feel free to ask!",
+                "additional_kwargs": {
+                    "refusal": null
+                },
+                "response_metadata": {
+                    "token_usage": {
+                        "completion_tokens": 42,
+                        "prompt_tokens": 79,
+                        "total_tokens": 121,
+                        "completion_tokens_details": {
+                            "accepted_prediction_tokens": 0,
+                            "audio_tokens": 0,
+                            "reasoning_tokens": 0,
+                            "rejected_prediction_tokens": 0
+                        },
+                        "prompt_tokens_details": {
+                            "audio_tokens": 0,
+                            "cached_tokens": 0
+                        }
+                    },
+                    "model_name": "gpt-4o-mini-2024-07-18",
+                    "system_fingerprint": "fp_7a53abb7a2",
+                    "id": "chatcmpl-BWhZMcboEXAh8rxAdkdjFeMJKXSN3",
+                    "service_tier": null,
+                    "finish_reason": "stop",
+                    "logprobs": null,
+                    "content_filter_results": {}
+                },
+                "type": "ai",
+                "name": null,
+                "id": "run--fdf86580-355d-4550-9910-7549d41e5657-0",
+                "example": false,
+                "tool_calls": [],
+                "invalid_tool_calls": [],
+                "usage_metadata": {
+                    "input_tokens": 79,
+                    "output_tokens": 42,
+                    "total_tokens": 121,
+                    "input_token_details": {
+                        "audio": 0,
+                        "cache_read": 0
+                    },
+                    "output_token_details": {
+                        "audio": 0,
+                        "reasoning": 0
+                    }
+                }
+            }
+        },
+        {
+            "type": "human",
+            "data": {
+                "content": "Do you remember my name?",
+                "additional_kwargs": {},
+                "response_metadata": {},
+                "type": "human",
+                "name": null,
+                "id": null,
+                "example": false
+            }
+        },
+        {
+            "type": "ai",
+            "data": {
+                "content": "I don't have the ability to remember personal information or past interactions, including names. Each session is stateless and does not retain information. If you'd like, you can tell me your name, and I can use it during our conversation!",
+                "additional_kwargs": {
+                    "refusal": null
+                },
+                "response_metadata": {
+                    "token_usage": {
+                        "completion_tokens": 48,
+                        "prompt_tokens": 68,
+                        "total_tokens": 116,
+                        "completion_tokens_details": {
+                            "accepted_prediction_tokens": 0,
+                            "audio_tokens": 0,
+                            "reasoning_tokens": 0,
+                            "rejected_prediction_tokens": 0
+                        },
+                        "prompt_tokens_details": {
+                            "audio_tokens": 0,
+                            "cached_tokens": 0
+                        }
+                    },
+                    "model_name": "gpt-4o-mini",
+                    "system_fingerprint": "fp_7a53abb7a2",
+                    "id": "chatcmpl-BWhaXIe6M0U7Wx4FAktxTAl1jDclo",
+                    "service_tier": null,
+                    "finish_reason": "stop",
+                    "logprobs": null,
+                    "content_filter_results": {}
+                },
+                "type": "ai",
+                "name": null,
+                "id": "run--76797236-fa87-4b45-982b-c358978027b4-0",
+                "example": false,
+                "tool_calls": [],
+                "invalid_tool_calls": [],
+                "usage_metadata": {
+                    "input_tokens": 68,
+                    "output_tokens": 48,
+                    "total_tokens": 116,
+                    "input_token_details": {
+                        "audio": 0,
+                        "cache_read": 0
+                    },
+                    "output_token_details": {
+                        "audio": 0,
+                        "reasoning": 0
+                    }
+                }
+            }
+        },
+        {
+            "type": "human",
+            "data": {
+                "content": "My name is rony",
+                "additional_kwargs": {},
+                "response_metadata": {},
+                "type": "human",
+                "name": null,
+                "id": null,
+                "example": false
+            }
+        },
+        {
+            "type": "ai",
+            "data": {
+                "content": "Nice to meet you, Rony! How can I assist you today?",
+                "additional_kwargs": {
+                    "refusal": null
+                },
+                "response_metadata": {
+                    "token_usage": {
+                        "completion_tokens": 16,
+                        "prompt_tokens": 73,
+                        "total_tokens": 89,
+                        "completion_tokens_details": {
+                            "accepted_prediction_tokens": 0,
+                            "audio_tokens": 0,
+                            "reasoning_tokens": 0,
+                            "rejected_prediction_tokens": 0
+                        },
+                        "prompt_tokens_details": {
+                            "audio_tokens": 0,
+                            "cached_tokens": 0
+                        }
+                    },
+                    "model_name": "gpt-4o-mini",
+                    "system_fingerprint": "fp_7a53abb7a2",
+                    "id": "chatcmpl-BWhb41RtSgnEZSWPvZJdz54dNd1Io",
+                    "service_tier": null,
+                    "finish_reason": "stop",
+                    "logprobs": null,
+                    "content_filter_results": {}
+                },
+                "type": "ai",
+                "name": null,
+                "id": "run--b1b1b289-d4db-49fc-bfc2-144a44f5a450-0",
+                "example": false,
+                "tool_calls": [],
+                "invalid_tool_calls": [],
+                "usage_metadata": {
+                    "input_tokens": 73,
+                    "output_tokens": 16,
+                    "total_tokens": 89,
+                    "input_token_details": {
+                        "audio": 0,
+                        "cache_read": 0
+                    },
+                    "output_token_details": {
+                        "audio": 0,
+                        "reasoning": 0
+                    }
+                }
+            }
+        },
+        {
+            "type": "human",
+            "data": {
+                "content": "what is my name ?",
+                "additional_kwargs": {},
+                "response_metadata": {},
+                "type": "human",
+                "name": null,
+                "id": null,
+                "example": false
+            }
+        },
+        {
+            "type": "ai",
+            "data": {
+                "content": "Your name is Rony! How can I help you today?",
+                "additional_kwargs": {
+                    "refusal": null
+                },
+                "response_metadata": {
+                    "token_usage": {
+                        "completion_tokens": 14,
+                        "prompt_tokens": 91,
+                        "total_tokens": 105,
+                        "completion_tokens_details": {
+                            "accepted_prediction_tokens": 0,
+                            "audio_tokens": 0,
+                            "reasoning_tokens": 0,
+                            "rejected_prediction_tokens": 0
+                        },
+                        "prompt_tokens_details": {
+                            "audio_tokens": 0,
+                            "cached_tokens": 0
+                        }
+                    },
+                    "model_name": "gpt-4o-mini-2024-07-18",
+                    "system_fingerprint": "fp_7a53abb7a2",
+                    "id": "chatcmpl-BWhbEsCSn964wjpXUsAoZjSjGa5aU",
+                    "service_tier": null,
+                    "finish_reason": "stop",
+                    "logprobs": null,
+                    "content_filter_results": {}
+                },
+                "type": "ai",
+                "name": null,
+                "id": "run--5127ab7b-a683-4693-af2b-23e1cc6824a4-0",
+                "example": false,
+                "tool_calls": [],
+                "invalid_tool_calls": [],
+                "usage_metadata": {
+                    "input_tokens": 91,
+                    "output_tokens": 14,
+                    "total_tokens": 105,
+                    "input_token_details": {
+                        "audio": 0,
+                        "cache_read": 0
+                    },
+                    "output_token_details": {
+                        "audio": 0,
+                        "reasoning": 0
+                    }
+                }
+            }
+        },
+        {
+            "type": "human",
+            "data": {
+                "content": "Do you remember my name?",
+                "additional_kwargs": {},
+                "response_metadata": {},
+                "type": "human",
+                "name": null,
+                "id": null,
+                "example": false
+            }
+        },
+        {
+            "type": "ai",
+            "data": {
+                "content": "Yes, your name is Rony! If there's anything specific you'd like to talk about or ask, feel free to let me know.",
+                "additional_kwargs": {
+                    "refusal": null
+                },
+                "response_metadata": {
+                    "token_usage": {
+                        "completion_tokens": 28,
+                        "prompt_tokens": 67,
+                        "total_tokens": 95,
+                        "completion_tokens_details": {
+                            "accepted_prediction_tokens": 0,
+                            "audio_tokens": 0,
+                            "reasoning_tokens": 0,
+                            "rejected_prediction_tokens": 0
+                        },
+                        "prompt_tokens_details": {
+                            "audio_tokens": 0,
+                            "cached_tokens": 0
+                        }
+                    },
+                    "model_name": "gpt-4o-mini",
+                    "system_fingerprint": "fp_7a53abb7a2",
+                    "id": "chatcmpl-BWhbRtM1HZPolbZUHkChEvwRwfAgC",
+                    "service_tier": null,
+                    "finish_reason": "stop",
+                    "logprobs": null,
+                    "content_filter_results": {}
+                },
+                "type": "ai",
+                "name": null,
+                "id": "run--5b4c2760-80b2-463a-abd1-bd7d60fa260f-0",
+                "example": false,
+                "tool_calls": [],
+                "invalid_tool_calls": [],
+                "usage_metadata": {
+                    "input_tokens": 67,
+                    "output_tokens": 28,
+                    "total_tokens": 95,
+                    "input_token_details": {
+                        "audio": 0,
+                        "cache_read": 0
+                    },
+                    "output_token_details": {
+                        "audio": 0,
+                        "reasoning": 0
+                    }
+                }
+            }
+        },
+        {
+            "type": "human",
+            "data": {
+                "content": "How's the weather in Kolkata?",
+                "additional_kwargs": {},
+                "response_metadata": {},
+                "type": "human",
+                "name": null,
+                "id": null,
+                "example": false
+            }
+        },
+        {
+            "type": "ai",
+            "data": {
+                "content": "I don't have real-time information, including current weather updates. I recommend checking a reliable weather website or app for the most accurate and up-to-date weather conditions in Kolkata. If you have any other questions or need assistance with something else, feel free to ask!",
+                "additional_kwargs": {
+                    "refusal": null
+                },
+                "response_metadata": {
+                    "token_usage": {
+                        "completion_tokens": 53,
+                        "prompt_tokens": 100,
+                        "total_tokens": 153,
+                        "completion_tokens_details": {
+                            "accepted_prediction_tokens": 0,
+                            "audio_tokens": 0,
+                            "reasoning_tokens": 0,
+                            "rejected_prediction_tokens": 0
+                        },
+                        "prompt_tokens_details": {
+                            "audio_tokens": 0,
+                            "cached_tokens": 0
+                        }
+                    },
+                    "model_name": "gpt-4o-mini-2024-07-18",
+                    "system_fingerprint": "fp_7a53abb7a2",
+                    "id": "chatcmpl-BWhfgzkJGs3wPEQcoxWg8rKMArBmI",
+                    "service_tier": null,
+                    "finish_reason": "stop",
+                    "logprobs": null,
+                    "content_filter_results": {}
+                },
+                "type": "ai",
+                "name": null,
+                "id": "run--548ff2b6-f94f-4ed4-97f0-238c593c729c-0",
+                "example": false,
+                "tool_calls": [],
+                "invalid_tool_calls": [],
+                "usage_metadata": {
+                    "input_tokens": 100,
+                    "output_tokens": 53,
+                    "total_tokens": 153,
+                    "input_token_details": {
+                        "audio": 0,
+                        "cache_read": 0
+                    },
+                    "output_token_details": {
+                        "audio": 0,
+                        "reasoning": 0
+                    }
+                }
+            }
+        },
+        {
+            "type": "human",
+            "data": {
+                "content": "ok, whats 2 + 2?",
+                "additional_kwargs": {},
+                "response_metadata": {},
+                "type": "human",
+                "name": null,
+                "id": null,
+                "example": false
+            }
+        },
+        {
+            "type": "ai",
+            "data": {
+                "content": "2 + 2 equals 4.",
+                "additional_kwargs": {
+                    "refusal": null
+                },
+                "response_metadata": {
+                    "token_usage": {
+                        "completion_tokens": 9,
+                        "prompt_tokens": 83,
+                        "total_tokens": 92,
+                        "completion_tokens_details": {
+                            "accepted_prediction_tokens": 0,
+                            "audio_tokens": 0,
+                            "reasoning_tokens": 0,
+                            "rejected_prediction_tokens": 0
+                        },
+                        "prompt_tokens_details": {
+                            "audio_tokens": 0,
+                            "cached_tokens": 0
+                        }
+                    },
+                    "model_name": "gpt-4o-mini-2024-07-18",
+                    "system_fingerprint": "fp_ded0d14823",
+                    "id": "chatcmpl-BWhfxDPSDqvgPrAqe71eXDxjSlGGs",
+                    "service_tier": null,
+                    "finish_reason": "stop",
+                    "logprobs": null,
+                    "content_filter_results": {}
+                },
+                "type": "ai",
+                "name": null,
+                "id": "run--e667ce14-ed09-4fb9-a761-f77c1cd0f7c1-0",
+                "example": false,
+                "tool_calls": [],
+                "invalid_tool_calls": [],
+                "usage_metadata": {
+                    "input_tokens": 83,
+                    "output_tokens": 9,
+                    "total_tokens": 92,
+                    "input_token_details": {
+                        "audio": 0,
+                        "cache_read": 0
+                    },
+                    "output_token_details": {
+                        "audio": 0,
+                        "reasoning": 0
+                    }
+                }
+            }
+        },
+        {
+            "type": "human",
+            "data": {
+                "content": "In Kolkata the weather is hot and humid.",
+                "additional_kwargs": {},
+                "response_metadata": {},
+                "type": "human",
+                "name": null,
+                "id": null,
+                "example": false
+            }
+        },
+        {
+            "type": "ai",
+            "data": {
+                "content": "Kolkata is known for its hot and humid climate, especially during the summer months. High temperatures, often exceeding 30\u00b0C (86\u00b0F), combined with humidity can make it feel even warmer. The monsoon season, typically from June to September, can bring heavy rainfall and slightly cooler temperatures, but humidity often remains high. If you're in Kolkata during this time, staying hydrated and finding ways to keep cool is essential. If you have any more questions about Kolkata or anything else, feel free to ask!",
+                "additional_kwargs": {
+                    "refusal": null
+                },
+                "response_metadata": {
+                    "token_usage": {
+                        "completion_tokens": 103,
+                        "prompt_tokens": 97,
+                        "total_tokens": 200,
+                        "completion_tokens_details": {
+                            "accepted_prediction_tokens": 0,
+                            "audio_tokens": 0,
+                            "reasoning_tokens": 0,
+                            "rejected_prediction_tokens": 0
+                        },
+                        "prompt_tokens_details": {
+                            "audio_tokens": 0,
+                            "cached_tokens": 0
+                        }
+                    },
+                    "model_name": "gpt-4o-mini",
+                    "system_fingerprint": "fp_7a53abb7a2",
+                    "id": "chatcmpl-BWhgOP4ccwsuOVZbZOrLu0Fx9sk81",
+                    "service_tier": null,
+                    "finish_reason": "stop",
+                    "logprobs": null,
+                    "content_filter_results": {}
+                },
+                "type": "ai",
+                "name": null,
+                "id": "run--5e3336f7-6204-4561-85c6-be4f179ca648-0",
+                "example": false,
+                "tool_calls": [],
+                "invalid_tool_calls": [],
+                "usage_metadata": {
+                    "input_tokens": 97,
+                    "output_tokens": 103,
+                    "total_tokens": 200,
+                    "input_token_details": {
+                        "audio": 0,
+                        "cache_read": 0
+                    },
+                    "output_token_details": {
+                        "audio": 0,
+                        "reasoning": 0
+                    }
+                }
+            }
+        },
+        {
+            "type": "human",
+            "data": {
+                "content": "current weather is 40 deg C",
+                "additional_kwargs": {},
+                "response_metadata": {},
+                "type": "human",
+                "name": null,
+                "id": null,
+                "example": false
+            }
+        },
+        {
+            "type": "ai",
+            "data": {
+                "content": "It sounds like you're experiencing some hot weather! Make sure to stay hydrated, wear lightweight clothing, and take breaks in the shade or indoors if you can. If you need more specific advice or information, feel free to ask!",
+                "additional_kwargs": {
+                    "refusal": null
+                },
+                "response_metadata": {
+                    "token_usage": {
+                        "completion_tokens": 46,
+                        "prompt_tokens": 14,
+                        "total_tokens": 60,
+                        "completion_tokens_details": {
+                            "accepted_prediction_tokens": 0,
+                            "audio_tokens": 0,
+                            "reasoning_tokens": 0,
+                            "rejected_prediction_tokens": 0
+                        },
+                        "prompt_tokens_details": {
+                            "audio_tokens": 0,
+                            "cached_tokens": 0
+                        }
+                    },
+                    "model_name": "gpt-4o-mini",
+                    "system_fingerprint": "fp_7a53abb7a2",
+                    "id": "chatcmpl-BWhgp8Nd7XGO8icKAAs4SqfJF8UoT",
+                    "service_tier": null,
+                    "finish_reason": "stop",
+                    "logprobs": null,
+                    "content_filter_results": {}
+                },
+                "type": "ai",
+                "name": null,
+                "id": "run--8806dc63-b048-429c-af4f-c32a307623ed-0",
+                "example": false,
+                "tool_calls": [],
+                "invalid_tool_calls": [],
+                "usage_metadata": {
+                    "input_tokens": 14,
+                    "output_tokens": 46,
+                    "total_tokens": 60,
+                    "input_token_details": {
+                        "audio": 0,
+                        "cache_read": 0
+                    },
+                    "output_token_details": {
+                        "audio": 0,
+                        "reasoning": 0
+                    }
+                }
+            }
+        },
+        {
+            "type": "human",
+            "data": {
+                "content": "Do you know my name?",
+                "additional_kwargs": {},
+                "response_metadata": {},
+                "type": "human",
+                "name": null,
+                "id": null,
+                "example": false
+            }
+        },
+        {
+            "type": "ai",
+            "data": {
+                "content": "I don't have access to personal data about individuals unless it has been shared with me in the course of our conversation. Therefore, I don't know your name. If you'd like me to address you by a specific name, feel free to share it!",
+                "additional_kwargs": {
+                    "refusal": null
+                },
+                "response_metadata": {
+                    "token_usage": {
+                        "completion_tokens": 50,
+                        "prompt_tokens": 73,
+                        "total_tokens": 123,
+                        "completion_tokens_details": {
+                            "accepted_prediction_tokens": 0,
+                            "audio_tokens": 0,
+                            "reasoning_tokens": 0,
+                            "rejected_prediction_tokens": 0
+                        },
+                        "prompt_tokens_details": {
+                            "audio_tokens": 0,
+                            "cached_tokens": 0
+                        }
+                    },
+                    "model_name": "gpt-4o-mini-2024-07-18",
+                    "system_fingerprint": "fp_7a53abb7a2",
+                    "id": "chatcmpl-BWhh2nLKvYNpn14s59ebC0Gic6kB2",
+                    "service_tier": null,
+                    "finish_reason": "stop",
+                    "logprobs": null,
+                    "content_filter_results": {}
+                },
+                "type": "ai",
+                "name": null,
+                "id": "run--02ac43e2-29f9-41c7-8dbe-62b1a4b479ef-0",
+                "example": false,
+                "tool_calls": [],
+                "invalid_tool_calls": [],
+                "usage_metadata": {
+                    "input_tokens": 73,
+                    "output_tokens": 50,
+                    "total_tokens": 123,
+                    "input_token_details": {
+                        "audio": 0,
+                        "cache_read": 0
+                    },
+                    "output_token_details": {
+                        "audio": 0,
+                        "reasoning": 0
+                    }
+                }
+            }
+        },
+        {
+            "type": "human",
+            "data": {
+                "content": "What is my name?",
+                "additional_kwargs": {},
+                "response_metadata": {},
+                "type": "human",
+                "name": null,
+                "id": null,
+                "example": false
+            }
+        },
+        {
+            "type": "ai",
+            "data": {
+                "content": "I don\u2019t know your name unless you tell me. If you\u2019d like to share it or ask me anything else, feel free!",
+                "additional_kwargs": {
+                    "refusal": null
+                },
+                "response_metadata": {
+                    "token_usage": {
+                        "completion_tokens": 28,
+                        "prompt_tokens": 75,
+                        "total_tokens": 103,
+                        "completion_tokens_details": {
+                            "accepted_prediction_tokens": 0,
+                            "audio_tokens": 0,
+                            "reasoning_tokens": 0,
+                            "rejected_prediction_tokens": 0
+                        },
+                        "prompt_tokens_details": {
+                            "audio_tokens": 0,
+                            "cached_tokens": 0
+                        }
+                    },
+                    "model_name": "gpt-4o-mini",
+                    "system_fingerprint": "fp_7a53abb7a2",
+                    "id": "chatcmpl-BWhh9ssNHbHm7zQHxuZkUSPpozJ5F",
+                    "service_tier": null,
+                    "finish_reason": "stop",
+                    "logprobs": null,
+                    "content_filter_results": {}
+                },
+                "type": "ai",
+                "name": null,
+                "id": "run--88e45310-3db8-4236-b2fe-81da584a6730-0",
+                "example": false,
+                "tool_calls": [],
+                "invalid_tool_calls": [],
+                "usage_metadata": {
+                    "input_tokens": 75,
+                    "output_tokens": 28,
+                    "total_tokens": 103,
+                    "input_token_details": {
+                        "audio": 0,
+                        "cache_read": 0
+                    },
+                    "output_token_details": {
+                        "audio": 0,
+                        "reasoning": 0
+                    }
+                }
+            }
+        }
+    ]
+}
