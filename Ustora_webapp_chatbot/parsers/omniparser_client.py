@@ -1,12 +1,21 @@
-import requests
+# omniparser_client.py
+
+import aiohttp
+import asyncio
+import time
+from aiohttp import FormData, ClientTimeout
 from PIL import Image
 from io import BytesIO
-from config import OMNIPARSER_API  # Assuming the API URL is stored in config.py
+from config import OMNIPARSER_API
 
 
-def compress_image(image_path: str, max_size=(800, 800), quality=80) -> BytesIO:
+MAX_RETRIES = 5  # Max retries for failed requests
+RETRY_DELAY = 10  # Delay in seconds between retries
+
+
+async def compress_image(image_path: str, max_size=(800, 800), quality=80) -> BytesIO:
     """
-    Resize and compress the image to reduce file size.
+    Resizes and compresses the image to reduce file size.
     """
     with Image.open(image_path) as img:
         img.thumbnail(max_size)
@@ -20,58 +29,55 @@ def compress_image(image_path: str, max_size=(800, 800), quality=80) -> BytesIO:
         return img_bytes
 
 
-def parse_image_with_omnparser(image_path: str) -> dict:
+async def parse_image_with_omnparser(image_path: str) -> dict:
     """
-    Parse the image using OmniParser API synchronously.
+    Parse the image using OmniParser API.
     """
-    try:
-        # Compress the image
-        compressed_image = compress_image(image_path)
+    compressed_image = await compress_image(image_path)
 
-        # Prepare form data
-        form = {
-            "prompt": "",
-            "box_threshold": "0.05",
-            "iou_threshold": "0.1",
-            "use_paddleocr": "true",
-            "imgsz": "640"
-        }
+    form = FormData()
+    form.add_field("prompt", "")
+    form.add_field("box_threshold", "0.05")
+    form.add_field("iou_threshold", "0.1")
+    form.add_field("use_paddleocr", "true")
+    form.add_field("imgsz", "640")
 
-        # Make a synchronous POST request to the OmniParser API
-        files = {
-            "image": ("screenshot.jpg", compressed_image, "image/jpeg")
-        }
+    # Add compressed image to form
+    form.add_field(
+        name="image",
+        value=compressed_image,
+        filename="screenshot.jpg",  # Now a .jpg file (compressed)
+        content_type="image/jpeg"
+    )
 
-        # Send the request to OmniParser API
-        response = requests.post(OMNIPARSER_API, data=form, files=files)
+    # Increase timeout to 60 seconds
+    timeout = ClientTimeout(total=600)
 
-        # Check the response status
-        if response.status_code != 200:
-            print(f"❌ Failed to parse image {image_path}. HTTP Status: {response.status_code}")
+    async with aiohttp.ClientSession(timeout=timeout) as session:
+        try:
+            async with session.post(OMNIPARSER_API, data=form) as response:
+                if response.status != 200:
+                    print(f"❌ HTTP {response.status} for {image_path}")
+                    return None
+                print(f"✅ Parsed output received from OmniParser for {image_path}")
+                return await response.json()
+        except asyncio.TimeoutError:
+            print(f"⏰ Timeout while processing {image_path}")
             return None
 
-        # Return parsed result from OmniParser
-        print(f"✅ OmniParser response received for {image_path}")
-        return response.json()
 
-    except Exception as e:
-        print(f"❌ Error while processing {image_path}: {e}")
-        return None
-
-
-def parse_image_with_retries(image_path: str, max_retries=5, retry_delay=10) -> dict:
+async def parse_image_with_retries(image_path: str) -> dict:
     """
-    Retry failed requests up to `max_retries` times with `retry_delay` delay between each attempt.
+    Retry failed requests up to `MAX_RETRIES` times with `RETRY_DELAY` delay between each.
     """
-    for attempt in range(1, max_retries + 1):
-        print(f"🔁 Attempt {attempt} for {image_path}")
-        result = parse_image_with_omnparser(image_path)
-
+    for attempt in range(MAX_RETRIES):
+        result = await parse_image_with_omnparser(image_path)
         if result:
             return result
 
-        print(f"⏳ Retrying in {retry_delay} seconds...")
-        time.sleep(retry_delay)
+        # Log retry information
+        print(f"❌ Retrying {image_path}... (Attempt {attempt + 1}/{MAX_RETRIES})")
+        await asyncio.sleep(RETRY_DELAY)
 
-    print(f"⚠️ Failed to process {image_path} after {max_retries} attempts")
+    print(f"⚠️ Failed to process {image_path} after {MAX_RETRIES} attempts")
     return None

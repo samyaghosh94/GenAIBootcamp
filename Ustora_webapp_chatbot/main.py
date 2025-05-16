@@ -1,15 +1,16 @@
 # main.py
-
+import asyncio
 import os
 import json
+import subprocess
+import sys
 import uuid
 from dotenv import load_dotenv
 import streamlit as st
-import faiss
 
 from chat_history import save_chat_history
 from config import SCREENSHOT_DIR, DOCSTORE_PATH, FAISS_INDEX_PATH
-from screenshot_capture import capture_screenshots_for_all_pages
+import context_data_setup
 from parsers.omniparser_client import parse_image_with_retries
 from vectorstore.custom_diallab_embeddings import DialLabEmbeddings
 from vectorstore.custom_diallab_retriever import DialLabRetriever
@@ -23,27 +24,11 @@ import global_retriever
 # Load environment variables
 load_dotenv()
 
-# Function to parse images from screenshots
-def parse_all_screenshots(screenshot_dir=SCREENSHOT_DIR):
-    parsed_results = []
-    for file in os.listdir(screenshot_dir):
-        if file.lower().endswith(('.png', '.jpg', '.jpeg')):
-            full_path = os.path.join(screenshot_dir, file)
-            result = parse_image_with_retries(full_path)
-            if result:
-                parsed_results.append(result if isinstance(result, str) else result.get("content", ""))
-    return parsed_results
-
-# Function to load or parse documents
-def load_or_parse_documents(screenshot_dir=SCREENSHOT_DIR):
+# Function to load documents
+def load_or_parse_documents():
     if os.path.exists(DOCSTORE_PATH):
         with open(DOCSTORE_PATH, "r", encoding="utf-8") as f:
             texts = [doc["page_content"] for doc in json.load(f)]
-    else:
-        texts = parse_all_screenshots(screenshot_dir)
-        os.makedirs(os.path.dirname(DOCSTORE_PATH), exist_ok=True)
-        with open(DOCSTORE_PATH, "w", encoding="utf-8") as f:
-            json.dump([{"page_content": text} for text in texts], f)
     return texts
 
 # Streamlit UI setup
