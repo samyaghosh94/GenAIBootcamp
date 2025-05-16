@@ -1,9 +1,6 @@
-# main.py
 import asyncio
 import os
 import json
-import subprocess
-import sys
 import uuid
 from dotenv import load_dotenv
 import streamlit as st
@@ -18,11 +15,11 @@ from vectorstore.loader import load_or_build_vectorstore
 from langchain.schema import Document
 from langchain_core.messages import HumanMessage, AIMessage
 from graph.chat_graph import build_graph  # Your build_graph implementation
-# Set the global retriever used inside generate_response
 import global_retriever
 
 # Load environment variables
 load_dotenv()
+
 
 # Function to load documents
 def load_or_parse_documents():
@@ -30,6 +27,7 @@ def load_or_parse_documents():
         with open(DOCSTORE_PATH, "r", encoding="utf-8") as f:
             texts = [doc["page_content"] for doc in json.load(f)]
     return texts
+
 
 # Streamlit UI setup
 st.set_page_config(page_title="Ustora WebApp Chatbot")
@@ -67,11 +65,9 @@ retriever = DialLabRetriever(
 
 # Set global retriever for generate_response
 global_retriever.retriever = retriever
-print("Global retriever set:", global_retriever.retriever)
 
 # Save the FAISS index path
 faiss_index_path = FAISS_INDEX_PATH
-
 
 # 5. Build graph (compile only the graph)
 graph = build_graph(
@@ -81,35 +77,46 @@ graph = build_graph(
     api_key=embeddings.api_key
 )
 
-# 6. Chat input field
-user_input = st.chat_input("Ask something about the app...")
 
-if user_input:
-    st.session_state.chat_history.append(HumanMessage(content=user_input))
-
+# 6. Define the async function to handle the graph invocation
+async def get_response_from_graph(user_input: str):
     state = {
-        "messages": st.session_state.chat_history,
+        "messages": st.session_state.chat_history + [HumanMessage(content=user_input)],
         "session_id": st.session_state.session_id,
         "faiss_index_path": faiss_index_path,
         "model": embeddings.model,
         "api_key": embeddings.api_key
     }
 
-    # Print the state to understand what we are passing to graph.invoke()
-    print("State being passed into graph.invoke():", state)
+    # Print the state to understand what we are passing to graph.ainvoke()
+    print("State being passed into graph.ainvoke():", state)
 
-    # Ensure the retriever is passed correctly to the state
-    result = graph.invoke(
-        state,
-        config={"configurable": {"thread_id": st.session_state.session_id}}
-    )
+    # Using `ainvoke` for asynchronous invocation
+    result = await graph.ainvoke(state, config={"configurable": {"thread_id": st.session_state.session_id}})
 
-    st.session_state.chat_history = result["messages"]
+    # Assuming the response is in result["messages"]
+    return result["messages"]
+
+
+# 7. Chat input field
+user_input = st.chat_input("Ask something about the app...")
+
+if user_input:
+    st.session_state.chat_history.append(HumanMessage(content=user_input))
+
+    # Get response from the graph asynchronously
+    result_messages = asyncio.run(get_response_from_graph(user_input))
+
+    # Assuming the last message in the result is the AI response
+    ai_message = result_messages[-1].content if result_messages else "No response generated."
+
+    # Append AI's response to chat history
+    st.session_state.chat_history.append(AIMessage(content=ai_message))
 
     # Save the updated chat history to a file
     save_chat_history(st.session_state.session_id, st.session_state.chat_history)
 
-# 7. Show chat messages
+# 8. Show chat messages
 for msg in st.session_state.chat_history:
     role = "user" if isinstance(msg, HumanMessage) else "assistant"
     st.chat_message(role).write(msg.content)
