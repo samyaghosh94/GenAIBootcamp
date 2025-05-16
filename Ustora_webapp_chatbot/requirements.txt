@@ -1,0 +1,5 @@
+requests
+langchain
+openai
+faiss-cpu
+pydantic
