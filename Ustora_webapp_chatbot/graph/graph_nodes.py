@@ -2,6 +2,7 @@
 
 import asyncio
 from langchain_core.messages import HumanMessage, AIMessage, trim_messages
+from langsmith import traceable
 from model.gemini_client import call_gemini_api  # Your async Gemini API call
 from langchain.schema import Document
 from langchain_core.messages.base import BaseMessage

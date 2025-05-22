@@ -3,7 +3,9 @@
 import json
 import aiohttp
 from config import GEMINI_API
+from langsmith import traceable
 
+@traceable
 async def call_gemini_api(message: str, semantics: str) -> str:
     payload = {
         "message": message,

@@ -1,10 +1,14 @@
+# custom_diallab_embeddings.py
+
 import os
 import requests
 from typing import List
 
 from dotenv import load_dotenv
 from langchain.embeddings.base import Embeddings
+from langsmith import traceable
 
+@traceable
 class DialLabEmbeddings(Embeddings):
     def __init__(self, model: str, api_key: str, base_url: str):
         self.model = model

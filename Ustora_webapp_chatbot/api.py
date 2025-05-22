@@ -1,3 +1,5 @@
+# api.py
+
 import json
 import os
 import uuid
@@ -5,7 +7,7 @@ from typing import List
 
 from fastapi import FastAPI, Request
 from langchain_core.messages import HumanMessage, BaseMessage, AIMessage
-from config import FAISS_INDEX_PATH, SCREENSHOT_DIR, DOCSTORE_PATH
+from config import FAISS_INDEX_PATH, SCREENSHOT_DIR, DOCSTORE_PATH, QNA_PARSED_PATH
 from vectorstore.loader import load_or_build_vectorstore
 from vectorstore.custom_diallab_embeddings import DialLabEmbeddings
 from vectorstore.custom_diallab_retriever import DialLabRetriever
@@ -14,6 +16,7 @@ from graph.chat_graph import build_graph
 import global_retriever
 from dotenv import load_dotenv
 from chat_history import load_chat_history, save_chat_history  # Import your chat history functions
+from langsmith import traceable
 
 load_dotenv()
 
@@ -21,7 +24,7 @@ app = FastAPI()
 
 
 # Function to load parsed documents
-def load_or_parse_documents(screenshot_dir=SCREENSHOT_DIR):
+def load_or_parse_documents():
     if os.path.exists(DOCSTORE_PATH):
         with open(DOCSTORE_PATH, "r", encoding="utf-8") as f:
             texts = [doc["page_content"] for doc in json.load(f)]
@@ -29,12 +32,38 @@ def load_or_parse_documents(screenshot_dir=SCREENSHOT_DIR):
         texts = []
     return texts
 
+# Function to load QnA documents
+def load_qna_documents():
+    with open(QNA_PARSED_PATH, "r", encoding="utf-8") as f:
+        qna_data = json.load(f)
 
-# Define an async chat function to handle the async `graph.ainvoke()`
+    # Convert QnA dictionary into plain text chunks for embedding
+    qna_texts = []
+    for question, answer_obj in qna_data.items():
+        if isinstance(answer_obj["answer"], dict):  # Multiple options
+            options_text = "\n".join(
+                f"{opt_key}: {opt_val}" for opt_key, opt_val in answer_obj["answer"].items()
+            )
+            qna_texts.append(f"Q: {question}\nA:\n{options_text}")
+        else:
+            qna_texts.append(f"Q: {question}\nA: {answer_obj['answer']}")
+
+    return qna_texts
+
+
+# Define an async chat function to handle the async `graph.ainvoke()
+@traceable()
 async def chat_async(session_id: str, chat_history: List[BaseMessage]) -> str:
     # 1. Load parsed documents
-    texts = load_or_parse_documents()
-    all_chunks = [Document(page_content=text) for text in texts]
+    omni_texts = load_or_parse_documents()
+    omni_documents = [Document(page_content=omni_text) for omni_text in omni_texts]
+
+    # 2. Load and embed QnA documents
+    qna_texts = load_qna_documents()
+    qna_documents = [Document(page_content=qna_text) for qna_text in qna_texts]
+
+    # ✅ 3. Combine all documents into a single list
+    all_chunks = omni_documents + qna_documents
 
     # 2. Set up vectorstore
     embeddings = DialLabEmbeddings(
