@@ -1,57 +1,69 @@
-import os
 import json
+import os
 import faiss
 from langchain.vectorstores import FAISS
 from langchain.schema import Document
 from langchain.docstore.in_memory import InMemoryDocstore
-from config import FAISS_INDEX_PATH, DOCSTORE_PATH, QNA_PARSED_PATH
+from config import FAISS_INDEX_PATH, DOCSTORE_PATH, QNA_PARSED_TEXT_PATH, QNA_PARSED_PATH
+from dotenv import load_dotenv
+
+load_dotenv()
+
+
+def load_qna_texts():
+    if os.path.exists(QNA_PARSED_TEXT_PATH):
+        with open(QNA_PARSED_TEXT_PATH, "r", encoding="utf-8") as f:
+            qna_texts = [item["page_content"] for item in json.load(f)]
+        print(f"✅ Loaded {len(qna_texts)} QnA texts for embedding.")
+        return qna_texts
+    return []
+
+
+def load_screenshot_data():
+    if os.path.exists(DOCSTORE_PATH):
+        with open(DOCSTORE_PATH, "r", encoding="utf-8") as f:
+            screenshot_data = [Document(page_content=item["page_content"]) for item in json.load(f)]
+        print(f"✅ Loaded {len(screenshot_data)} screenshot documents.")
+        return screenshot_data
+    return []
+
 
 def load_or_build_vectorstore(embeddings):
-    # Step 1: Load OmniParser (screenshot) documents
-    if not os.path.exists(DOCSTORE_PATH):
-        raise FileNotFoundError(f"Missing required file: {DOCSTORE_PATH}")
-    with open(DOCSTORE_PATH, "r", encoding="utf-8") as f:
-        omni_docs = [Document(**doc) for doc in json.load(f)]
+    """Load or build a combined FAISS vectorstore for screenshots + QnA."""
+    # Load both sets of documents
+    screenshot_documents = load_screenshot_data()
+    qna_texts = load_qna_texts()
+    qna_documents = [Document(page_content=text) for text in qna_texts]
+    all_documents = screenshot_documents + qna_documents
 
-    # Step 2: Load QnA documents from JSON
-    if not os.path.exists(QNA_PARSED_PATH):
-        raise FileNotFoundError(f"Missing required file: {QNA_PARSED_PATH}")
-    with open(QNA_PARSED_PATH, "r", encoding="utf-8") as f:
-        qna_json = json.load(f)
-
-    # Convert QnA dict to Document list
-    qna_docs = [
-        Document(
-            page_content=f"Q: {question}\nA: {answer['answer'] if isinstance(answer['answer'], str) else json.dumps(answer['answer'])}"
-        )
-        for question, answer in qna_json.items()
-    ]
-
-    # Step 3: Combine all chunks
-    all_docs = omni_docs + qna_docs
-
-    # Step 4: If FAISS index already exists, load it
-    if os.path.exists(FAISS_INDEX_PATH):
+    if os.path.exists(FAISS_INDEX_PATH) and os.path.exists(DOCSTORE_PATH) and os.path.exists(QNA_PARSED_TEXT_PATH):
         print("🔄 Loading FAISS index from disk...")
         index = faiss.read_index(FAISS_INDEX_PATH)
 
-        # Build docstore only from omni_docs (because that’s what's in documents.json)
-        docstore = InMemoryDocstore({str(i): doc for i, doc in enumerate(omni_docs)})
+        # Create a new docstore from combined documents
+        docstore_dict = {str(i): doc for i, doc in enumerate(all_documents)}
+        docstore = InMemoryDocstore(docstore_dict)
+
+        index_to_docstore_id = {i: str(i) for i in range(len(all_documents))}
 
         vectorstore = FAISS(
             embedding_function=embeddings,
             index=index,
             docstore=docstore,
-            index_to_docstore_id={i: str(i) for i in range(len(omni_docs))}
+            index_to_docstore_id=index_to_docstore_id
         )
-    else:
-        print("⚙️ Building FAISS index from scratch...")
-        vectorstore = FAISS.from_documents(all_docs, embeddings)
+        print("✅ Vector store loaded successfully.")
+        return vectorstore
 
-        # Save FAISS index only
-        os.makedirs(os.path.dirname(FAISS_INDEX_PATH), exist_ok=True)
-        faiss.write_index(vectorstore.index, FAISS_INDEX_PATH)
+    # If no saved index, build from scratch
+    print("⚙️ Building FAISS index from scratch...")
+    vectorstore = FAISS.from_documents(all_documents, embeddings)
 
-        # DO NOT overwrite documents.json here — it's already persisted
+    os.makedirs(os.path.dirname(FAISS_INDEX_PATH), exist_ok=True)
+    faiss.write_index(vectorstore.index, FAISS_INDEX_PATH)
 
+    with open(DOCSTORE_PATH, "w", encoding="utf-8") as f:
+        json.dump([doc.dict() for doc in all_documents], f, ensure_ascii=False, indent=4)
+
+    print("✅ Vector store created and saved.")
     return vectorstore
