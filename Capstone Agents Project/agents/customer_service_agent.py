@@ -42,11 +42,11 @@ def create_embeddings_store(split_docs: List[Document]) -> Chroma:
 def retriever(query: str, vector_db: Chroma) -> List[Document]:
     return vector_db.as_retriever(search_kwargs={"k": 3}).invoke(query)
 
-def customer_service_agent(state: HotelState) -> HotelState:
+def customer_service_agent(state: HotelState) -> dict:
     print("\n🛎️ Running Customer Service Agent...")
 
-    customer_name = state.booking.get("customer_name", "Guest")
-    inquiry = state.request.get("inquiry", "No inquiry provided")
+    customer_name = state["booking"].get("customer_name", "Guest")
+    inquiry = state["request"].get("inquiry", "No inquiry provided")
 
     print(f"📨 Inquiry from {customer_name}: {inquiry}")
 
@@ -79,15 +79,14 @@ Answer:
         # Step 4: Call Gemini (or your chat model)
         response = chat_model.predict(prompt)
 
-    # Step 5: Store response in state
-    state.customer_service = {
-        "customer_name": customer_name,
+    customer_service_info = {
         "inquiry": inquiry,
-        "response": response,
-        "status": "Responded"
+        "response": response
     }
 
     print(f"\n✅ Customer service response:\n{response}\n")
-    return state
+
+    # Return new updated state dict with customer_service info updated
+    return {**state, "customer_service": customer_service_info}
 
 

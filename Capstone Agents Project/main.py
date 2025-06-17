@@ -2,32 +2,50 @@ from core.hotel_state import HotelState
 from agents.booking_agent import booking_agent
 from agents.housekeeping_agent import housekeeping_agent
 from agents.customer_service_agent import customer_service_agent
+from langgraph.graph import StateGraph
 
-def run_hotel_workflow():
-    # Step 1: Construct initial request
-    initial_request = {
-        "inquiry": "Do you have late checkout?",  # match key to customer_service_agent expected 'inquiry'
-        "customer_name": "Alice Johnson",
-        "room_type": "Deluxe",
-    }
 
-    # Step 2: Create shared state
-    state = HotelState(initial_request)
-    state.booking = {"customer_name": initial_request["customer_name"]}  # ensure booking info is present
+def build_graph() -> StateGraph:
+    graph = StateGraph(HotelState)
 
-    print("\n🏨 Hotel Management Workflow Starting...\n")
+    # Register nodes
+    graph.add_node("booking_agent", booking_agent)
+    graph.add_node("housekeeping_agent", housekeeping_agent)
+    graph.add_node("customer_service_agent", customer_service_agent)
 
-    # Step 3: Booking
-    state = booking_agent(state)
+    graph.set_entry_point("booking_agent")
 
-    # Step 4: Housekeeping
-    state = housekeeping_agent(state)
+    graph.add_edge("booking_agent", "housekeeping_agent")
+    graph.add_edge("housekeeping_agent", "customer_service_agent")
 
-    # Step 5: Customer Service (RAG-enabled)
-    state = customer_service_agent(state)
+    graph.set_finish_point("customer_service_agent")
 
-    print("\n✅ Workflow Complete. Final State:\n")
-    print(state.to_dict())
+    return graph.compile()  # returns a compiled graph object, but no need to type explicitly
+
 
 if __name__ == "__main__":
-    run_hotel_workflow()
+    initial_request = {
+        "customer_name": "Bob Smith",
+        "room_type": "Suite",
+        "inquiry": "Do you offer late checkout?"
+    }
+
+    initial_state = {
+        "request": initial_request,
+        "booking": {},
+        "housekeeping": {},
+        "customer_service": {}
+    }
+
+    graph = build_graph()
+
+    print(graph.get_graph().draw_mermaid())
+
+    print("\n🔁 Running LangGraph Workflow...\n")
+
+    final_state = graph.invoke(initial_state)
+
+    print("\n--- Final State ---")
+    print("Booking Info:", final_state["booking"])
+    print("Housekeeping Info:", final_state["housekeeping"])
+    print("Customer Service Info:", final_state["customer_service"])
