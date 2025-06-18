@@ -1,5 +1,8 @@
 requests
 langchain
-openai
 faiss-cpu
 pydantic
+python-dotenv
+streamlit
+langgraph
+typing-extensions

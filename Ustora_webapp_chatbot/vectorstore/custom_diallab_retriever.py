@@ -1,11 +1,14 @@
+# custom_diallab_retriever.py
+
 import os
 from typing import List
 from dotenv import load_dotenv
 from langchain.vectorstores import FAISS
 from langchain.schema import Document
+from langsmith import traceable
 from vectorstore.custom_diallab_embeddings import DialLabEmbeddings  # Your custom embeddings class
 
-
+@traceable()
 class DialLabRetriever:
     def __init__(self, model: str, api_key: str, base_url: str, faiss_index: FAISS):
         """
