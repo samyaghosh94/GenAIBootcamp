@@ -21,3 +21,6 @@ EMBEDDING_MODEL = 'openai'  # change to 'huggingface' or other if needed
 
 FAISS_INDEX_PATH = "storage/faiss_index.index"
 DOCSTORE_PATH = "storage/documents.json"
+QNA_DOC_PATH = "storage/QnA Document for Ustora Website.txt"
+QNA_PARSED_PATH = "storage/qna_data.json"
+QNA_PARSED_TEXT_PATH = "storage/qna_texts.json"
