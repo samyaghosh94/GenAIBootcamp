@@ -11,6 +11,7 @@ from langchain_openai import AzureOpenAIEmbeddings
 from autogen_ext.models.openai import OpenAIChatCompletionClient
 from tools.rag_tool import rag_tool
 from autogen_core.models import ModelInfo, ModelFamily
+from constants import MASTER_PROMPT
 
 
 load_dotenv()
@@ -42,9 +43,11 @@ rag_agent = AssistantAgent(
     model_client=gemini_client,
     tools=[rag_tool],
     handoffs=["router_agent","user"],
-    system_message=
-                """You are a RAG agent assisting users with Ustora shopping queries.
-                Use the 'retrieve_context' tool to get relevant information. Once you have answered the user's question, STRICTLY, handoff to the user.""",
+    system_message= MASTER_PROMPT
+    # system_message=
+    #             "You are a RAG agent assisting users with Ustora shopping queries. "
+    #             "Use the 'retrieve_context' tool to get relevant information. "
+    #             "Answer the user's question using only the retrieved context. Then STRICTLY handoff to the user.",
 )
 
 termination = HandoffTermination(target="user")

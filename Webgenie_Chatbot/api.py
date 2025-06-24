@@ -13,13 +13,22 @@ from autogen_agentchat.messages import HandoffMessage, TextMessage, ThoughtEvent
 from autogen_agentchat.agents import AssistantAgent
 from autogen_ext.models.openai import OpenAIChatCompletionClient
 from autogen_core.models import ModelInfo
-
+from constants import MASTER_PROMPT
 from tools.rag_tool import rag_tool
 from dotenv import load_dotenv
-
+from fastapi.middleware.cors import CORSMiddleware
 load_dotenv()
 
 app = FastAPI()
+
+# Add CORS Middleware
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # Change to specific domains in production
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 # === Storage for chat histories ===
 CHAT_HISTORY_DIR = "chat_history"
@@ -70,11 +79,7 @@ rag_agent = AssistantAgent(
     model_client=gemini_client,
     tools=[rag_tool],
     handoffs=["router_agent", "user"],
-    system_message=(
-        "You are a RAG agent assisting users with Ustora shopping queries. "
-        "Use the 'retrieve_context' tool to get relevant information. "
-        "Once you have answered the user's question, STRICTLY handoff to the user."
-    ),
+    system_message=MASTER_PROMPT
 )
 
 termination = HandoffTermination(target="user")
@@ -125,7 +130,8 @@ async def chat_api(body: QueryRequest):
                 content_str = safe_text(msg.content)
 
                 if isinstance(msg, (ThoughtEvent, TextMessage)):
-                    last_text = content_str
+                    if content_str:  # update only if non-empty
+                        last_text = content_str
 
                 if isinstance(msg, HandoffMessage):
                     last_handoff_source = msg.source
