@@ -1,57 +1,71 @@
-import json
 import os
+import json
 from langchain.vectorstores import FAISS
-from langchain.schema import Document
 from langchain.docstore.in_memory import InMemoryDocstore
+from langchain.schema import Document
+from langchain_unstructured import UnstructuredLoader
 import faiss
+from langchain_openai import AzureOpenAIEmbeddings
 from config import FAISS_INDEX_PATH, QNA_PARSED_TEXT_PATH
 from dotenv import load_dotenv
 
 load_dotenv()
 
 
-def load_qna_texts():
-    if os.path.exists(QNA_PARSED_TEXT_PATH):
-        with open(QNA_PARSED_TEXT_PATH, "r", encoding="utf-8") as f:
-            qna_texts = [item["page_content"] for item in json.load(f)]
-        print(f"✅ Loaded {len(qna_texts)} QnA texts for embedding.")
-        return qna_texts
-    print("⚠️ No QnA texts found.")
-    return []
+def load_rag_vectorstore(embeddings, docx_path: str) -> FAISS:
+    """
+    Loads or builds a FAISS vectorstore from a .docx file using UnstructuredLoader.
+    """
+    # FAISS_INDEX_PATH = r"C:\Users\samya_ghosh\PycharmProjects\GenAIBootcamp\Webgenie_Chatbot\storage\faiss_index.index"
+    # QNA_PARSED_TEXT_PATH = r"C:\Users\samya_ghosh\PycharmProjects\GenAIBootcamp\Webgenie_Chatbot\storage\qna_texts.json"
+    print(f"📄 Loading DOCX using UnstructuredLoader: {docx_path}")
 
+    loader = UnstructuredLoader(
+        file_path=docx_path,
+        strategy="hi_res",               # More accurate extraction
+        chunking_strategy="by_title",       # Group into coherent sections
+        include_orig_elements=False      # Skip raw elements
+    )
 
-def load_rag_vectorstore(embeddings):
-    """Load or build a FAISS vectorstore using QnA texts only."""
-    qna_texts = load_qna_texts()
-    qna_documents = [Document(page_content=text) for text in qna_texts]
+    documents = loader.load()
 
-    if os.path.exists(FAISS_INDEX_PATH) and os.path.exists(QNA_PARSED_TEXT_PATH):
-        print("🔄 Loading FAISS index from disk...")
+    # Save parsed content (for debugging or reuse)
+    os.makedirs(os.path.dirname(QNA_PARSED_TEXT_PATH), exist_ok=True)
+    with open(QNA_PARSED_TEXT_PATH, "w", encoding="utf-8") as f:
+        json.dump([{"page_content": doc.page_content} for doc in documents], f, indent=2, ensure_ascii=False)
+
+    # Create or load FAISS index
+    if os.path.exists(FAISS_INDEX_PATH):
+        print("🔄 Loading existing FAISS index...")
         index = faiss.read_index(FAISS_INDEX_PATH)
 
-        # Create a new docstore from QnA documents
-        docstore_dict = {str(i): doc for i, doc in enumerate(qna_documents)}
+        docstore_dict = {str(i): doc for i, doc in enumerate(documents)}
         docstore = InMemoryDocstore(docstore_dict)
+        index_to_docstore_id = {i: str(i) for i in range(len(documents))}
 
-        index_to_docstore_id = {i: str(i) for i in range(len(qna_documents))}
-
-        vectorstore = FAISS(
+        return FAISS(
             embedding_function=embeddings,
             index=index,
             docstore=docstore,
             index_to_docstore_id=index_to_docstore_id
         )
-        print("✅ Vector store loaded successfully.")
-        return vectorstore
 
-    print("⚙️ Building FAISS index from scratch...")
-    vectorstore = FAISS.from_documents(qna_documents, embeddings)
+    print("⚙️ Building new FAISS index...")
+    vectorstore = FAISS.from_documents(documents, embeddings)
 
     os.makedirs(os.path.dirname(FAISS_INDEX_PATH), exist_ok=True)
     faiss.write_index(vectorstore.index, FAISS_INDEX_PATH)
 
-    with open(QNA_PARSED_TEXT_PATH, "w", encoding="utf-8") as f:
-        json.dump([{"page_content": doc.page_content} for doc in qna_documents], f, ensure_ascii=False, indent=4)
-
     print("✅ Vector store created and saved.")
     return vectorstore
+
+
+if __name__ == '__main__':
+    embeddings = AzureOpenAIEmbeddings(
+        model="text-embedding-3-small-1",
+        azure_endpoint=os.getenv("AZURE_ENDPOINT"),
+        api_key=os.getenv("DIAL_LAB_KEY"),
+        api_version=os.getenv("AZURE_API_VERSION")
+    )
+    vectorstore = load_rag_vectorstore(embeddings,
+                                       docx_path=r"C:\Users\samya_ghosh\PycharmProjects\GenAIBootcamp\Webgenie_Chatbot\storage\HCM_BackOffice_User_Help_Guide_Enhanced.docx")
