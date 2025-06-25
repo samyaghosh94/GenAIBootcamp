@@ -1,4 +1,5 @@
 import asyncio
+import os
 from typing import Any, Dict, List
 
 from autogen_agentchat.agents import AssistantAgent
@@ -21,7 +22,7 @@ def refund_flight(flight_id: str) -> str:
 gemini_client = OpenAIChatCompletionClient(
     model="gemini-1.5-flash",  # or "gemini-1.5-pro"
     base_url="https://generativelanguage.googleapis.com/v1beta/openai/",
-    api_key="AIzaSyCMP7upEjEgwksEUdd25R4fK0JiHMCPz8s"
+    api_key=os.getenv("OPENAI_API_KEY")
 )
 
 travel_agent = AssistantAgent(
