@@ -6,7 +6,6 @@ from typing import Optional
 from fastapi import FastAPI
 from fastapi.responses import JSONResponse
 from pydantic import BaseModel
-
 from autogen_agentchat.teams import Swarm
 from autogen_agentchat.conditions import HandoffTermination
 from autogen_agentchat.messages import HandoffMessage, TextMessage, ThoughtEvent
@@ -57,7 +56,7 @@ class QueryRequest(BaseModel):
 gemini_client = OpenAIChatCompletionClient(
     model="gemini-1.5-flash",
     base_url="https://generativelanguage.googleapis.com/v1beta/openai/",
-    api_key=os.getenv("OPENAI_API_KEY"),
+    api_key=os.getenv("GENAI_KEY"),
     model_info=ModelInfo(
         family="gemini",
         vision=False,
@@ -158,7 +157,6 @@ async def chat_api(body: QueryRequest):
             status_code=500,
             content={"error": str(e), "session_id": session_id}
         )
-
 
 # === Health check ===
 @app.get("/status")

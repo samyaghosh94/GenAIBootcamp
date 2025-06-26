@@ -53,7 +53,7 @@ rag_agent = AssistantAgent(
 termination = HandoffTermination(target="user")
 team = Swarm([router_agent, rag_agent], termination_condition=termination)
 
-task = "What products are available on the website?"
+task = "How to add a new employee record?"
 
 
 async def run_team_stream() -> None:
