@@ -1,22 +1,29 @@
-# mongo_vectorstore.py
-
 from pymongo import MongoClient
-from typing import List
-import os
+from typing import List, Optional
 from uuid import uuid4
+from langchain.schema import Document
 
+# MongoDB configuration
 MONGO_URI = "mongodb+srv://samyaghosh:yucDguD1JQN2DoxG@rag-db.hdjdbnj.mongodb.net/rag_db?retryWrites=true&w=majority&appName=RAG-DB"
+DB_NAME = "rag_db"
+COLLECTION_NAME = "test_rag_vectorstore"
+VECTOR_INDEX_NAME = "vector_index"  # This must match the name of your vector index in Atlas
 
+# Connect to MongoDB
 client = MongoClient(MONGO_URI, serverSelectionTimeoutMS=5000)
-db = client["rag_db"]
-collection = db["test_rag_vectorstore"]
+db = client[DB_NAME]
+collection = db[COLLECTION_NAME]
 
 
-def save_embedding(doc_content: str, embedding: List[float], metadata: dict = None):
-    # Step 1: Test connection
+def clear_vectorstore():
+    """Delete all documents in the vector store (do this once before re-embedding)."""
     client.admin.command('ping')
-    print("✅ Connected successfully to MongoDB Atlas!")
+    delete_result = collection.delete_many({})
+    print(f"🧹 Deleted {delete_result.deleted_count} documents from the collection.")
 
+
+def save_embedding(doc_content: str, embedding: List[float], metadata: Optional[dict] = None):
+    """Insert a single document and its embedding into MongoDB."""
     metadata = metadata or {}
     doc_id = str(uuid4())
     vectordoc = {
@@ -25,10 +32,38 @@ def save_embedding(doc_content: str, embedding: List[float], metadata: dict = No
         "embedding": embedding,
         "metadata": metadata
     }
-    vector_insert = collection.insert_one(vectordoc)
-    print(f"✅ Successfully inserted test document with ID: {vector_insert.inserted_id}")
+    result = collection.insert_one(vectordoc)
+    print(f"✅ Inserted document with ID: {result.inserted_id}")
     return doc_id
 
 
 def get_all_embeddings():
     return list(collection.find())
+
+
+def vector_similarity_search(query_embedding: List[float], k: int = 5) -> List[Document]:
+    """Perform semantic similarity search using MongoDB Vector Search."""
+    pipeline = [
+        {
+            "$vectorSearch": {
+                "index": VECTOR_INDEX_NAME,
+                "path": "embedding",
+                "queryVector": query_embedding,
+                "numCandidates": 100,
+                "limit": k
+            }
+        },
+        {
+            "$project": {
+                "content": 1,
+                "metadata": 1,
+                "score": {"$meta": "vectorSearchScore"}
+            }
+        }
+    ]
+
+    results = collection.aggregate(pipeline)
+    return [
+        Document(page_content=doc["content"], metadata=doc.get("metadata", {}))
+        for doc in results
+    ]

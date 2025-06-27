@@ -1,39 +1,40 @@
-# rag_tool.py
-
 from autogen_core.tools import FunctionTool
 from typing import List
 from langchain.schema import Document
 from config import DOCX_SOURCE_PATH
 from vectorstore.rag_loader import load_rag_vectorstore
-from langchain_openai import AzureOpenAIEmbeddings
+from vectorstore.mongo_vectorstore import vector_similarity_search  # Your MongoDB search function
 from vectorstore.gemini_embeddings import GeminiEmbeddings
 import os
 from dotenv import load_dotenv
 
 load_dotenv()
 
-# Load embeddings and vectorstore once
-# embeddings = AzureOpenAIEmbeddings(
-#     model="text-embedding-3-small-1",
-#     azure_endpoint=os.getenv("AZURE_ENDPOINT"),
-#     api_key=os.getenv("DIAL_LAB_KEY"),
-#     api_version=os.getenv("AZURE_API_VERSION")
-# )
-
 embeddings = GeminiEmbeddings(api_key=os.getenv("EMBEDDING_KEY"))
 print("📦 Loading vectorstore...")
-vectorstore = load_rag_vectorstore(embeddings, DOCX_SOURCE_PATH)
+# Load documents but no FAISS index now
+documents = load_rag_vectorstore(embeddings, DOCX_SOURCE_PATH)
 print("✅ Vectorstore loaded.")
 
 def retrieve_context(query: str) -> str:
     print(f"\n🔍 Received query: {query}")
-    docs: List[Document] = vectorstore.similarity_search(query, k=3)
-    print(f"📊 Retrieved {len(docs)} documents from FAISS index")
-    if not docs:
+    query_embedding = embeddings.embed_query(query)
+
+    # Run vector similarity search against MongoDB vector store
+    results = vector_similarity_search(query_embedding, k=3)
+    print(f"📊 Retrieved {len(results)} documents from MongoDB vector store")
+
+    if not results:
         return "No relevant information found."
+
+    # Convert your result dicts to Documents if needed
+    docs = results
+
     for i, doc in enumerate(docs):
         print(f"\n📄 Match {i + 1}:\n{doc.page_content[:300]}...\n")
+
     return "\n\n".join([doc.page_content for doc in docs])
+
 
 rag_tool = FunctionTool(
     name="retrieve_context",

@@ -1,38 +1,26 @@
-# rag_loader.py
-
 import os
 import json
-import time
-
-from langchain.vectorstores import FAISS
-from langchain.docstore.in_memory import InMemoryDocstore
-from langchain.schema import Document
-from langchain_unstructured import UnstructuredLoader
-import faiss
-from langchain_openai import AzureOpenAIEmbeddings
-# from config import FAISS_INDEX_PATH, QNA_PARSED_TEXT_PATH
 from dotenv import load_dotenv
-from vectorstore.mongo_vectorstore import save_embedding
-# from mongo_vectorstore import save_embedding
-# from gemini_embeddings import GeminiEmbeddings
+from langchain_unstructured import UnstructuredLoader
+from vectorstore.mongo_vectorstore import clear_vectorstore, save_embedding, vector_similarity_search
 from vectorstore.gemini_embeddings import GeminiEmbeddings
+# from mongo_vectorstore import clear_vectorstore, save_embedding, vector_similarity_search
+# from gemini_embeddings import GeminiEmbeddings
 
 load_dotenv()
 
-
-def load_rag_vectorstore(embeddings, docx_path: str) -> FAISS:
+def load_rag_vectorstore(embeddings, docx_path: str):
     """
-    Loads or builds a FAISS vectorstore from a .docx file using UnstructuredLoader.
+    Loads and saves embeddings into MongoDB vector store from a .docx file.
     """
-    FAISS_INDEX_PATH = r"C:\Users\samya_ghosh\PycharmProjects\GenAIBootcamp\Webgenie_Chatbot\storage\faiss_index.index"
     QNA_PARSED_TEXT_PATH = r"C:\Users\samya_ghosh\PycharmProjects\GenAIBootcamp\Webgenie_Chatbot\storage\qna_texts.json"
     print(f"📄 Loading DOCX using UnstructuredLoader: {docx_path}")
 
     loader = UnstructuredLoader(
         file_path=docx_path,
-        strategy="hi_res",               # More accurate extraction
-        chunking_strategy="by_title",       # Group into coherent sections
-        include_orig_elements=False      # Skip raw elements
+        strategy="hi_res",
+        chunking_strategy="by_title",
+        include_orig_elements=False
     )
 
     documents = loader.load()
@@ -42,46 +30,33 @@ def load_rag_vectorstore(embeddings, docx_path: str) -> FAISS:
     with open(QNA_PARSED_TEXT_PATH, "w", encoding="utf-8") as f:
         json.dump([{"page_content": doc.page_content} for doc in documents], f, indent=2, ensure_ascii=False)
 
-    # ✅ NEW: Store each document’s embedding in MongoDB
-    print("🧠 Saving embeddings to MongoDB...")
+    # Clear old embeddings first
+    print("🧹 Clearing old embeddings from MongoDB vector store...")
+    clear_vectorstore()
+
+    # Save new embeddings to MongoDB
+    print("🧠 Saving embeddings to MongoDB vector store...")
     for doc in documents:
         embedding = embeddings.embed_query(doc.page_content)
         save_embedding(doc.page_content, embedding)
 
-    # Create or load FAISS index
-    if os.path.exists(FAISS_INDEX_PATH):
-        print("🔄 Loading existing FAISS index...")
-        index = faiss.read_index(FAISS_INDEX_PATH)
-
-        docstore_dict = {str(i): doc for i, doc in enumerate(documents)}
-        docstore = InMemoryDocstore(docstore_dict)
-        index_to_docstore_id = {i: str(i) for i in range(len(documents))}
-
-        return FAISS(
-            embedding_function=embeddings,
-            index=index,
-            docstore=docstore,
-            index_to_docstore_id=index_to_docstore_id
-        )
-
-    print("⚙️ Building new FAISS index...")
-    time.sleep(120)  # Simulate long processing time for index creation
-    vectorstore = FAISS.from_documents(documents, embeddings)
-
-    os.makedirs(os.path.dirname(FAISS_INDEX_PATH), exist_ok=True)
-    faiss.write_index(vectorstore.index, FAISS_INDEX_PATH)
-
-    print("✅ Vector store created and saved.")
-    return vectorstore
+    print("✅ Completed saving all embeddings to MongoDB.")
+    return documents
 
 
 if __name__ == '__main__':
-    # embeddings = AzureOpenAIEmbeddings(
-    #     model="text-embedding-3-small-1",
-    #     azure_endpoint=os.getenv("AZURE_ENDPOINT"),
-    #     api_key=os.getenv("DIAL_LAB_KEY"),
-    #     api_version=os.getenv("AZURE_API_VERSION")
-    # )
     embeddings = GeminiEmbeddings(api_key=os.getenv("EMBEDDING_KEY"))
-    vectorstore = load_rag_vectorstore(embeddings,
-                                       docx_path=r"C:\Users\samya_ghosh\PycharmProjects\GenAIBootcamp\Webgenie_Chatbot\storage\HCM_BackOffice_User_Help_Guide_Enhanced.docx")
+    docx_path = r"C:\Users\samya_ghosh\PycharmProjects\GenAIBootcamp\Webgenie_Chatbot\storage\HCM_BackOffice_User_Help_Guide_Enhanced.docx"
+
+    # Load and save embeddings
+    docs = load_rag_vectorstore(embeddings, docx_path)
+
+    # Run a test similarity search
+    sample_query = "How to add a new employee record?"
+    print(f"\n🔎 Running similarity search for query: {sample_query}")
+    query_embedding = embeddings.embed_query(sample_query)
+    results = vector_similarity_search(query_embedding, k=3)
+
+    print("\n🎯 Search results:")
+    for i, doc in enumerate(results, 1):
+        print(f"Result {i}: {doc.page_content[:300]}...\n")
