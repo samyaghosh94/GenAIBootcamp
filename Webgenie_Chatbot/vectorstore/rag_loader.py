@@ -6,14 +6,13 @@ from vectorstore.mongo_vectorstore import clear_vectorstore, save_embedding, vec
 from vectorstore.gemini_embeddings import GeminiEmbeddings
 # from mongo_vectorstore import clear_vectorstore, save_embedding, vector_similarity_search
 # from gemini_embeddings import GeminiEmbeddings
-
+from config import QNA_PARSED_TEXT_PATH, DOCX_SOURCE_PATH
 load_dotenv()
 
 def load_rag_vectorstore(embeddings, docx_path: str):
     """
     Loads and saves embeddings into MongoDB vector store from a .docx file.
     """
-    QNA_PARSED_TEXT_PATH = r"C:\Users\samya_ghosh\PycharmProjects\GenAIBootcamp\Webgenie_Chatbot\storage\qna_texts.json"
     print(f"📄 Loading DOCX using UnstructuredLoader: {docx_path}")
 
     loader = UnstructuredLoader(
@@ -46,7 +45,7 @@ def load_rag_vectorstore(embeddings, docx_path: str):
 
 if __name__ == '__main__':
     embeddings = GeminiEmbeddings(api_key=os.getenv("EMBEDDING_KEY"))
-    docx_path = r"C:\Users\samya_ghosh\PycharmProjects\GenAIBootcamp\Webgenie_Chatbot\storage\HCM_BackOffice_User_Help_Guide_Enhanced.docx"
+    docx_path = DOCX_SOURCE_PATH
 
     # Load and save embeddings
     docs = load_rag_vectorstore(embeddings, docx_path)

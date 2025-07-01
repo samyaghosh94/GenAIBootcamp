@@ -1,10 +1,12 @@
 from pymongo import MongoClient
 from uuid import uuid4
 import os
+from dotenv import load_dotenv
+load_dotenv()
 
 # Use hardcoded URI or from environment
-MONGO_URI = "mongodb+srv://samyaghosh:yucDguD1JQN2DoxG@rag-db.hdjdbnj.mongodb.net/rag_db?retryWrites=true&w=majority&appName=RAG-DB"
-# MONGO_URI = os.getenv("MONGO_URI")
+# MONGO_URI = "mongodb+srv://samyaghosh:yucDguD1JQN2DoxG@rag-db.hdjdbnj.mongodb.net/rag_db?retryWrites=true&w=majority&appName=RAG-DB"
+MONGO_URI = os.getenv("MONGO_URI")
 
 try:
     client = MongoClient(MONGO_URI, serverSelectionTimeoutMS=5000)

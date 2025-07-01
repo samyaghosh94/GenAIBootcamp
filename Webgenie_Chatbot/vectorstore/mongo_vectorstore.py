@@ -2,9 +2,12 @@ from pymongo import MongoClient
 from typing import List, Optional
 from uuid import uuid4
 from langchain.schema import Document
+import os
+from dotenv import load_dotenv
+load_dotenv()
 
 # MongoDB configuration
-MONGO_URI = "mongodb+srv://samyaghosh:yucDguD1JQN2DoxG@rag-db.hdjdbnj.mongodb.net/rag_db?retryWrites=true&w=majority&appName=RAG-DB"
+MONGO_URI = os.getenv("MONGO_URI")
 DB_NAME = "rag_db"
 COLLECTION_NAME = "test_rag_vectorstore"
 VECTOR_INDEX_NAME = "vector_index"  # This must match the name of your vector index in Atlas

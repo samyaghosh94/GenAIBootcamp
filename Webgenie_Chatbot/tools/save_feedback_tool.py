@@ -1,8 +1,10 @@
 from autogen_core.tools import FunctionTool
 from pymongo import MongoClient
 import os
+from dotenv import load_dotenv
+load_dotenv()
 
-mongo_uri = "mongodb+srv://samyaghosh:yucDguD1JQN2DoxG@rag-db.hdjdbnj.mongodb.net/rag_db?retryWrites=true&w=majority&appName=RAG-DB"
+mongo_uri = os.getenv("MONGO_URI")
 client = MongoClient(mongo_uri)
 db = client.get_database("feedback_db")
 collection = db.get_collection("user_feedback")
