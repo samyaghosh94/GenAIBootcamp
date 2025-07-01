@@ -2,7 +2,7 @@ import json
 import os
 import uuid
 from typing import Optional
-
+from datetime import datetime, timezone
 from fastapi import FastAPI
 from fastapi.responses import JSONResponse
 from pydantic import BaseModel
@@ -12,8 +12,9 @@ from autogen_agentchat.messages import HandoffMessage, TextMessage, ThoughtEvent
 from autogen_agentchat.agents import AssistantAgent
 from autogen_ext.models.openai import OpenAIChatCompletionClient
 from autogen_core.models import ModelInfo
-from constants import MASTER_PROMPT
+from constants import RAG_PROMPT, FEEDBACK_PROMPT, ROUTER_PROMPT
 from tools.rag_tool import rag_tool
+from tools.save_feedback_tool import save_feedback_tool
 from dotenv import load_dotenv
 from fastapi.middleware.cors import CORSMiddleware
 load_dotenv()
@@ -54,9 +55,9 @@ class QueryRequest(BaseModel):
 
 # === OpenAI / Gemini client ===
 gemini_client = OpenAIChatCompletionClient(
-    model="gemini-1.5-flash",
+    model="gemini-2.5-flash",
     base_url="https://generativelanguage.googleapis.com/v1beta/openai/",
-    api_key=os.getenv("GENAI_KEY"),
+    api_key=os.getenv("GENAI_PLUS"),
     model_info=ModelInfo(
         family="gemini",
         vision=False,
@@ -69,8 +70,8 @@ gemini_client = OpenAIChatCompletionClient(
 router_agent = AssistantAgent(
     "router_agent",
     model_client=gemini_client,
-    handoffs=["rag_agent", "user"],
-    system_message="You are a router agent. Your job is to receive user queries and forward them to the RAG agent.",
+    handoffs=["rag_agent", "feedback_agent", "user"],
+    system_message=ROUTER_PROMPT
 )
 
 rag_agent = AssistantAgent(
@@ -78,11 +79,19 @@ rag_agent = AssistantAgent(
     model_client=gemini_client,
     tools=[rag_tool],
     handoffs=["router_agent", "user"],
-    system_message=MASTER_PROMPT
+    system_message=RAG_PROMPT
+)
+
+feedback_agent = AssistantAgent(
+    "feedback_agent",
+    model_client=gemini_client,
+    tools=[save_feedback_tool],  # A custom tool to save to MongoDB
+    handoffs=["router_agent", "user"],
+    system_message=FEEDBACK_PROMPT
 )
 
 termination = HandoffTermination(target="user")
-team = Swarm([router_agent, rag_agent], termination_condition=termination)
+team = Swarm([router_agent, rag_agent, feedback_agent], termination_condition=termination)
 
 
 # === Session file I/O ===
@@ -111,13 +120,14 @@ async def chat_api(body: QueryRequest):
     user_query = body.query
 
     session_data = load_session(session_id)
-    last_agent = session_data.get("last_agent", "router_agent")
+    # last_agent = session_data.get("last_agent", "router_agent")
+    last_agent = "router_agent"  # Always start with the router agent for routing
     message_history = session_data.get("messages", [])
 
     handoff_task = HandoffMessage(
         source="user",
         target=last_agent,
-        content=user_query,
+        content=user_query
     )
 
     last_text = None
@@ -127,6 +137,10 @@ async def chat_api(body: QueryRequest):
         async for msg in team.run_stream(task=handoff_task):
             if isinstance(msg, (ThoughtEvent, TextMessage, HandoffMessage)):
                 content_str = safe_text(msg.content)
+
+                # ✅ Add this line for debugging
+                print(
+                    f"[DEBUG] Received from {type(msg).__name__} | source: {getattr(msg, 'source', None)} | content: {msg.content}")
 
                 if isinstance(msg, (ThoughtEvent, TextMessage)):
                     if content_str:  # update only if non-empty

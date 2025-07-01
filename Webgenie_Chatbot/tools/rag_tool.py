@@ -10,7 +10,7 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-embeddings = GeminiEmbeddings(api_key=os.getenv("EMBEDDING_KEY"))
+embeddings = GeminiEmbeddings(api_key=os.getenv("GENAI_PLUS"))
 print("📦 Loading vectorstore...")
 # Load documents but no FAISS index now
 documents = load_rag_vectorstore(embeddings, DOCX_SOURCE_PATH)
