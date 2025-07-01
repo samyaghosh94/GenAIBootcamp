@@ -1,0 +1,26 @@
+fastapi
+uvicorn
+pydantic
+python-dotenv
+requests
+Pillow
+pymongo[srv]
+# LangChain & Embeddings
+langchain
+langchain-openai
+langchain_unstructured
+
+
+# AutoGen
+autogen-agentchat
+autogen-core
+autogen-ext
+
+# Vectorstore (assumed usage: FAISS, Chroma, or similar)
+faiss-cpu        # or faiss-gpu if using CUDA
+chromadb         # optional if using Chroma vector store
+
+# Async + Misc
+httpx
+tqdm
+openai

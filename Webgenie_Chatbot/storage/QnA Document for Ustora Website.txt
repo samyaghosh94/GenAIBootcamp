@@ -1,0 +1,24 @@
+Q1: What products are available on the website?
+Answer: Currently, 'Sony Smart TV-2015' and 'Apple new mac book 2015' are listed.
+Q2: How to search for product?
+Answer: Use the 'Search products' feature to find them.
+Q3: How to apply a coupon?
+Answer:
+Option 1: When you click the ‘ADD TO CART’ option on the product, it takes you to the ‘Shopping Cart’ page and you will find a ‘Coupon code’ text box. Now add your token to it and click on ‘Apply Coupon’.
+Option 2: If you already have a product in your cart, first go to your cart by clicking on ‘My Cart’. Then you will find a ‘Coupon code’ text box. Now add your token to it and click on ‘Apply Coupon’.
+Q4: How to add product to my cart?
+Answer:
+Option 1: To add a product to your cart, locate the product you wish to purchase. Click on the product to get to the product details page.  Then, click the 'ADD TO CART' button appearing on its right.
+Option 2: If your product is on the main screen under Latest Products, hover your mouse over it. You will see two buttons – “Add to cart” and “See Details”. Click on “Add to cart”.
+Q5: How to see details of a product?
+Answer:
+Option 1: To see the details of a product, locate the product listing.  The product details, such as the name (e.g., 'Sony Smart TV-2015'), price ($700.00), and 'ADD TO CART' button, are displayed next to it.
+Option 2: If your product is on the main screen under Latest Products, hover your mouse over it. You will see two buttons – “Add to cart” and “See Details”. Click on “See Details”.
+Q6: How do I checkout a product?
+Answer:
+Option 1: If your cart is empty, first locate the product or use ‘Search Products’ feature, add it to your cart, and click on ‘CHECKOUT’ button below your product and next to options like ‘UPDATE CART’.
+Option 2: If you have already added an item to your cart, you can now proceed to checkout by clicking the 'Checkout' button at the top of the screen.
+Q7: How to order a product?
+Answer:
+Option 1: To order a product, first add the product to your cart by clicking the 'ADD TO CART' button on the product's page.  Once you have items in your cart, click the 'Checkout' button at the top of the screen to proceed to the checkout process and complete your order.
+Option 2: To order a product, first add the product to your cart by clicking the 'ADD TO CART' button appearing on the product when you hover over it.  Once you have items in your cart, click the 'Checkout' button below your product and next to options like ‘UPDATE CART’ to proceed to the checkout process and complete your order.
