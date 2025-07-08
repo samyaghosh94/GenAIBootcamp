@@ -17,16 +17,28 @@ client = MongoClient(MONGO_URI, serverSelectionTimeoutMS=5000)
 db = client[DB_NAME]
 collection = db[COLLECTION_NAME]
 
+def collection_has_data(collection_name_override: Optional[str] = None) -> bool:
+    """
+    Checks if the specified collection already contains documents.
+    Returns True if data exists, False otherwise.
+    """
+    target_collection = db[collection_name_override or COLLECTION_NAME]
+    count = target_collection.estimated_document_count()
+    print(f"🔎 Collection '{target_collection.name}' has {count} documents.")
+    return count > 0
 
-def clear_vectorstore():
-    """Delete all documents in the vector store (do this once before re-embedding)."""
+
+
+def clear_vectorstore(collection_name_override: Optional[str] = None):
+    """Delete all documents in the vector store (e.g., before re-embedding)."""
     client.admin.command('ping')
-    delete_result = collection.delete_many({})
-    print(f"🧹 Deleted {delete_result.deleted_count} documents from the collection.")
+    target_collection = db[collection_name_override or COLLECTION_NAME]
+    delete_result = target_collection.delete_many({})
+    print(f"🧹 Deleted {delete_result.deleted_count} documents from collection '{target_collection.name}'")
 
 
-def save_embedding(doc_content: str, embedding: List[float], metadata: Optional[dict] = None):
-    """Insert a single document and its embedding into MongoDB."""
+
+def save_embedding(doc_content: str, embedding: List[float], metadata: Optional[dict] = None, collection_name_override: Optional[str] = None):
     metadata = metadata or {}
     doc_id = str(uuid4())
     vectordoc = {
@@ -35,8 +47,9 @@ def save_embedding(doc_content: str, embedding: List[float], metadata: Optional[
         "embedding": embedding,
         "metadata": metadata
     }
-    result = collection.insert_one(vectordoc)
-    print(f"✅ Inserted document with ID: {result.inserted_id}")
+    target_collection = db[collection_name_override or COLLECTION_NAME]
+    result = target_collection.insert_one(vectordoc)
+    print(f"✅ Inserted into '{target_collection.name}' with ID: {result.inserted_id}")
     return doc_id
 
 
@@ -44,12 +57,19 @@ def get_all_embeddings():
     return list(collection.find())
 
 
-def vector_similarity_search(query_embedding: List[float], k: int = 5) -> List[Document]:
-    """Perform semantic similarity search using MongoDB Vector Search."""
+def vector_similarity_search(
+    query_embedding: List[float],
+    k: int = 5,
+    collection_name_override: Optional[str] = None,
+    index_name_override: Optional[str] = None
+) -> List[Document]:
+    target_collection = db[collection_name_override or COLLECTION_NAME]
+    index_name = index_name_override or VECTOR_INDEX_NAME
+
     pipeline = [
         {
             "$vectorSearch": {
-                "index": VECTOR_INDEX_NAME,
+                "index": index_name,
                 "path": "embedding",
                 "queryVector": query_embedding,
                 "numCandidates": 100,
@@ -65,8 +85,10 @@ def vector_similarity_search(query_embedding: List[float], k: int = 5) -> List[D
         }
     ]
 
-    results = collection.aggregate(pipeline)
+    results = target_collection.aggregate(pipeline)
     return [
         Document(page_content=doc["content"], metadata=doc.get("metadata", {}))
         for doc in results
     ]
+
+

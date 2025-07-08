@@ -2,7 +2,7 @@ import os
 import json
 from dotenv import load_dotenv
 from langchain_unstructured import UnstructuredLoader
-from vectorstore.mongo_vectorstore import clear_vectorstore, save_embedding, vector_similarity_search
+from vectorstore.mongo_vectorstore import clear_vectorstore, save_embedding, vector_similarity_search, collection_has_data
 from vectorstore.gemini_embeddings import GeminiEmbeddings
 # from mongo_vectorstore import clear_vectorstore, save_embedding, vector_similarity_search
 # from gemini_embeddings import GeminiEmbeddings
@@ -28,6 +28,12 @@ def load_rag_vectorstore(embeddings, docx_path: str):
     os.makedirs(os.path.dirname(QNA_PARSED_TEXT_PATH), exist_ok=True)
     with open(QNA_PARSED_TEXT_PATH, "w", encoding="utf-8") as f:
         json.dump([{"page_content": doc.page_content} for doc in documents], f, indent=2, ensure_ascii=False)
+
+    # ✅ Check for existing data
+    collection_name = None
+    if collection_has_data(collection_name_override=collection_name):
+        print(f"ℹ️ Skipping re-embedding — data already exists in test_rag_vectorstore.")
+        return documents
 
     # Clear old embeddings first
     print("🧹 Clearing old embeddings from MongoDB vector store...")

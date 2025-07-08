@@ -12,9 +12,10 @@ from autogen_agentchat.messages import HandoffMessage, TextMessage, ThoughtEvent
 from autogen_agentchat.agents import AssistantAgent
 from autogen_ext.models.openai import OpenAIChatCompletionClient
 from autogen_core.models import ModelInfo
-from constants import RAG_PROMPT, FEEDBACK_PROMPT, ROUTER_PROMPT
+from constants import RAG_PROMPT, TROUBLESHOOT_PROMPT, ROUTER_PROMPT
 from tools.rag_tool import rag_tool
 from tools.save_feedback_tool import save_feedback_tool
+from tools.error_rag_tool import error_diagnosis_tool
 from dotenv import load_dotenv
 from fastapi.middleware.cors import CORSMiddleware
 load_dotenv()
@@ -70,7 +71,7 @@ gemini_client = OpenAIChatCompletionClient(
 router_agent = AssistantAgent(
     "router_agent",
     model_client=gemini_client,
-    handoffs=["rag_agent", "feedback_agent", "user"],
+    handoffs=["rag_agent", "troubleshoot_agent", "user"],
     system_message=ROUTER_PROMPT
 )
 
@@ -82,16 +83,16 @@ rag_agent = AssistantAgent(
     system_message=RAG_PROMPT
 )
 
-feedback_agent = AssistantAgent(
-    "feedback_agent",
+troubleshoot_agent = AssistantAgent(
+    "troubleshoot_agent",
     model_client=gemini_client,
-    tools=[save_feedback_tool],  # A custom tool to save to MongoDB
+    tools=[save_feedback_tool, error_diagnosis_tool],  # A custom tool to save to MongoDB
     handoffs=["router_agent", "user"],
-    system_message=FEEDBACK_PROMPT
+    system_message=TROUBLESHOOT_PROMPT
 )
 
 termination = HandoffTermination(target="user")
-team = Swarm([router_agent, rag_agent, feedback_agent], termination_condition=termination)
+team = Swarm([router_agent, rag_agent, troubleshoot_agent], termination_condition=termination)
 
 
 # === Session file I/O ===
