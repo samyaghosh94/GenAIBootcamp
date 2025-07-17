@@ -51,6 +51,7 @@ def safe_text(content):
 # === Request body ===
 class QueryRequest(BaseModel):
     query: str
+    html_context: Optional[str] = None
     session_id: Optional[str] = None
 
 
@@ -119,16 +120,25 @@ def save_session(session_id: str, last_agent: str, messages: list):
 async def chat_api(body: QueryRequest):
     session_id = body.session_id or str(uuid.uuid4())
     user_query = body.query
+    html_context = body.html_context or ""
 
     session_data = load_session(session_id)
     # last_agent = session_data.get("last_agent", "router_agent")
     last_agent = "router_agent"  # Always start with the router agent for routing
     message_history = session_data.get("messages", [])
 
+    combined_prompt = f"""
+    User Prompt:
+    {user_query}
+
+    User's current screen HTML source:
+    {html_context}
+    """
+
     handoff_task = HandoffMessage(
         source="user",
         target=last_agent,
-        content=user_query
+        content=combined_prompt
     )
 
     last_text = None
