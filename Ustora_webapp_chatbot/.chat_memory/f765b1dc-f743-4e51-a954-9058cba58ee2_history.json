@@ -1,0 +1,48 @@
+{
+    "messages": [
+        {
+            "content": "Hi, WHat is my name?",
+            "additional_kwargs": {},
+            "response_metadata": {},
+            "type": "human",
+            "name": null,
+            "id": null,
+            "example": false,
+            "metadata": {}
+        },
+        {
+            "content": "```json\n{\n  \"explanation\": \"I'm sorry, I do not have access to your personal information, including your name.  This application is designed to help you shop, not to store or provide your personal data.\",\n  \"targetControlId\": null,\n  \"actionInstruction\": null\n}\n```\n",
+            "additional_kwargs": {},
+            "response_metadata": {},
+            "type": "ai",
+            "name": null,
+            "id": null,
+            "example": false,
+            "tool_calls": [],
+            "invalid_tool_calls": [],
+            "usage_metadata": null,
+            "metadata": {}
+        },
+        {
+            "content": "What do I want to purchase?",
+            "additional_kwargs": {},
+            "response_metadata": {},
+            "type": "human",
+            "name": null,
+            "id": null,
+            "example": false
+        },
+        {
+            "content": "```json\n{\n  \"explanation\": \"I cannot tell you what you want to purchase.  That is a decision you must make. However, I can help you find products. Currently, 'Sony Smart TV-2015' and 'Apple new mac book 2015' are available.\",\n  \"targetControlId\": null,\n  \"actionInstruction\": null\n}\n```\n",
+            "additional_kwargs": {},
+            "response_metadata": {},
+            "type": "ai",
+            "name": null,
+            "id": null,
+            "example": false,
+            "tool_calls": [],
+            "invalid_tool_calls": [],
+            "usage_metadata": null
+        }
+    ]
+}

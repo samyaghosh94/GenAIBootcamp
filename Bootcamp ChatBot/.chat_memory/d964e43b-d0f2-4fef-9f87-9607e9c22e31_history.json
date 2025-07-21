@@ -1,0 +1,133 @@
+{
+    "session_id": "d964e43b-d0f2-4fef-9f87-9607e9c22e31",
+    "messages": [
+        {
+            "type": "human",
+            "data": {
+                "content": "hi",
+                "additional_kwargs": {},
+                "response_metadata": {},
+                "type": "human",
+                "name": null,
+                "id": null,
+                "example": false
+            }
+        },
+        {
+            "type": "ai",
+            "data": {
+                "content": "Hello! How can I assist you today?",
+                "additional_kwargs": {
+                    "refusal": null
+                },
+                "response_metadata": {
+                    "token_usage": {
+                        "completion_tokens": 10,
+                        "prompt_tokens": 8,
+                        "total_tokens": 18,
+                        "completion_tokens_details": {
+                            "accepted_prediction_tokens": 0,
+                            "audio_tokens": 0,
+                            "reasoning_tokens": 0,
+                            "rejected_prediction_tokens": 0
+                        },
+                        "prompt_tokens_details": {
+                            "audio_tokens": 0,
+                            "cached_tokens": 0
+                        }
+                    },
+                    "model_name": "gpt-4o-mini-2024-07-18",
+                    "system_fingerprint": "fp_7a53abb7a2",
+                    "id": "chatcmpl-BbmV87UnVKuE9SLTZTWbK6Q5Iwssf",
+                    "service_tier": null,
+                    "finish_reason": "stop",
+                    "logprobs": null,
+                    "content_filter_results": {}
+                },
+                "type": "ai",
+                "name": null,
+                "id": "run--40c3e3fb-cf13-4d00-99c1-d54daed1e5ff-0",
+                "example": false,
+                "tool_calls": [],
+                "invalid_tool_calls": [],
+                "usage_metadata": {
+                    "input_tokens": 8,
+                    "output_tokens": 10,
+                    "total_tokens": 18,
+                    "input_token_details": {
+                        "audio": 0,
+                        "cache_read": 0
+                    },
+                    "output_token_details": {
+                        "audio": 0,
+                        "reasoning": 0
+                    }
+                }
+            }
+        },
+        {
+            "type": "human",
+            "data": {
+                "content": "How is the weather in bangalore ?",
+                "additional_kwargs": {},
+                "response_metadata": {},
+                "type": "human",
+                "name": null,
+                "id": null,
+                "example": false
+            }
+        },
+        {
+            "type": "ai",
+            "data": {
+                "content": "I don't have real-time data access to provide current weather updates. For the latest weather information in Bangalore or any other location, I recommend checking a reliable weather website or using a weather app. Would you like to know about Bangalore's typical weather patterns or climate?",
+                "additional_kwargs": {
+                    "refusal": null
+                },
+                "response_metadata": {
+                    "token_usage": {
+                        "completion_tokens": 53,
+                        "prompt_tokens": 33,
+                        "total_tokens": 86,
+                        "completion_tokens_details": {
+                            "accepted_prediction_tokens": 0,
+                            "audio_tokens": 0,
+                            "reasoning_tokens": 0,
+                            "rejected_prediction_tokens": 0
+                        },
+                        "prompt_tokens_details": {
+                            "audio_tokens": 0,
+                            "cached_tokens": 0
+                        }
+                    },
+                    "model_name": "gpt-4o-mini-2024-07-18",
+                    "system_fingerprint": "fp_7a53abb7a2",
+                    "id": "chatcmpl-BbmVZxrO1sYC0ec2GwNqsK5JvVpNF",
+                    "service_tier": null,
+                    "finish_reason": "stop",
+                    "logprobs": null,
+                    "content_filter_results": {}
+                },
+                "type": "ai",
+                "name": null,
+                "id": "run--18205d5c-79be-4878-8744-c4b6ed0abb74-0",
+                "example": false,
+                "tool_calls": [],
+                "invalid_tool_calls": [],
+                "usage_metadata": {
+                    "input_tokens": 33,
+                    "output_tokens": 53,
+                    "total_tokens": 86,
+                    "input_token_details": {
+                        "audio": 0,
+                        "cache_read": 0
+                    },
+                    "output_token_details": {
+                        "audio": 0,
+                        "reasoning": 0
+                    }
+                }
+            }
+        }
+    ]
+}

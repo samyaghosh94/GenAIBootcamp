@@ -1,0 +1,48 @@
+{
+    "messages": [
+        {
+            "content": "Hi, I am samya",
+            "additional_kwargs": {},
+            "response_metadata": {},
+            "type": "human",
+            "name": null,
+            "id": null,
+            "example": false,
+            "metadata": {}
+        },
+        {
+            "content": "```json\n{\n  \"explanation\": \"Hi Samya! Welcome to Ustora.  I'm here to help you. Do you have any questions?\",\n  \"targetControlId\": \"icon 23\",\n  \"actionInstruction\": \"\"\n}\n```\n",
+            "additional_kwargs": {},
+            "response_metadata": {},
+            "type": "ai",
+            "name": null,
+            "id": null,
+            "example": false,
+            "tool_calls": [],
+            "invalid_tool_calls": [],
+            "usage_metadata": null,
+            "metadata": {}
+        },
+        {
+            "content": "I would like to checkout few items from my cart, can you help me with the steps to do this?",
+            "additional_kwargs": {},
+            "response_metadata": {},
+            "type": "human",
+            "name": null,
+            "id": null,
+            "example": false
+        },
+        {
+            "content": "```json\n{\n  \"explanation\": \"To checkout items from your cart, click the 'Checkout' button at the top of the screen.  This will take you to the checkout process where you can review your order and complete your purchase.\",\n  \"targetControlId\": \"Checkout button at the top of the screen\",\n  \"actionInstruction\": \"Click the 'Checkout' button at the top of the screen.\"\n}\n```\n",
+            "additional_kwargs": {},
+            "response_metadata": {},
+            "type": "ai",
+            "name": null,
+            "id": null,
+            "example": false,
+            "tool_calls": [],
+            "invalid_tool_calls": [],
+            "usage_metadata": null
+        }
+    ]
+}

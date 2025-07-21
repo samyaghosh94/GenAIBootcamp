@@ -1,0 +1,17 @@
+[
+  {
+    "page_content": "HCM Portal UI – Troubleshooting Guide\n\nIf you experience any issues while using the HCM Portal UI, please follow the steps below for common problems. If your issue is not resolved, you can submit feedback for further assistance.\n\n1. Error Adding Employee\n\nMessage: \"Error adding employee. Please try again.\"\n\nWhat to do:\n\nMake sure the Employee ID you entered is not already used by another employee.\n\nDouble-check that all required fields are filled in correctly."
+  },
+  {
+    "page_content": "Try refreshing the page and submitting the form again.\n\nStill not working? Please provide the details of what you tried to do and the Employee ID you used, and submit this as feedback. Our team will look into it.\n\n2. Error Adding Exit or Leave Request\n\nMessage: \"Error adding exit/leave request. Please try again.\"\n\nWhat to do:\n\nMake sure all required information is filled in.\n\nTry refreshing the page and submitting the request again."
+  },
+  {
+    "page_content": "Still not working? Please provide the details of your request and submit this as feedback. Our team will assist you.\n\n3. Page Not Updating or Data Missing\n\nWhat to do:\n\nTry refreshing the page.\n\nIf you recently made changes, wait a moment and check again.\n\nStill not working? Please describe what you were trying to do and what is missing, then submit this as feedback.\n\n4. Unexpected Error or Something Not Working\n\nWhat to do:\n\nRefresh the page and try again."
+  },
+  {
+    "page_content": "Make sure you are using a supported browser (such as Chrome, Edge, or Firefox).\n\nStill not working? Please describe the problem and what you were trying to do, then submit this as feedback.\n\nSubmitting Feedback\n\nIf your issue is not resolved after following these steps, please provide:\n\nA description of the problem and what you were trying to do.\n\nAny error messages you saw on the screen.\n\nThe steps you took before the issue happened."
+  },
+  {
+    "page_content": "Submit this information using the feedback option in the application. Our team will review your feedback and get back to you as soon as possible."
+  }
+]

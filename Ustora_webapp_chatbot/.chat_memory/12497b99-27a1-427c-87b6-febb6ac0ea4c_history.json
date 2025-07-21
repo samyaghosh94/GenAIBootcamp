@@ -1,0 +1,25 @@
+{
+    "messages": [
+        {
+            "content": "How do I apply a coupon for a product?",
+            "additional_kwargs": {},
+            "response_metadata": {},
+            "type": "human",
+            "name": null,
+            "id": null,
+            "example": false
+        },
+        {
+            "content": "```json\n{\n  \"explanation\": \"To apply a coupon, go to your shopping cart.  There will be a 'Coupon code' text box where you can enter your coupon code and click 'Apply Coupon'.\",\n  \"targetControlId\": \"shoppingCartButton\",\n  \"actionInstruction\": \"Go to your shopping cart and enter your coupon code in the provided text box.\"\n}\n```\n",
+            "additional_kwargs": {},
+            "response_metadata": {},
+            "type": "ai",
+            "name": null,
+            "id": null,
+            "example": false,
+            "tool_calls": [],
+            "invalid_tool_calls": [],
+            "usage_metadata": null
+        }
+    ]
+}

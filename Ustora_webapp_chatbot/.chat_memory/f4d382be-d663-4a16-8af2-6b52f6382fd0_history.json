@@ -1,0 +1,117 @@
+{
+    "messages": [
+        {
+            "content": "Hi",
+            "additional_kwargs": {},
+            "response_metadata": {},
+            "type": "human",
+            "name": null,
+            "id": null,
+            "example": false,
+            "metadata": {}
+        },
+        {
+            "content": "```json\n{\n  \"explanation\": \"Hi there! Welcome to Ustora.  I'm here to help you navigate the app. How can I assist you today?\",\n  \"targetControlId\": \"icon 2\",\n  \"actionInstruction\": \"Start your shopping experience by browsing the available products.\"\n}\n```\n",
+            "additional_kwargs": {},
+            "response_metadata": {},
+            "type": "ai",
+            "name": null,
+            "id": null,
+            "example": false,
+            "tool_calls": [],
+            "invalid_tool_calls": [],
+            "usage_metadata": null,
+            "metadata": {}
+        },
+        {
+            "content": "How do I apply a coupon for a product?",
+            "additional_kwargs": {},
+            "response_metadata": {},
+            "type": "human",
+            "name": null,
+            "id": null,
+            "example": false,
+            "metadata": {}
+        },
+        {
+            "content": "```json\n{\n  \"explanation\": \"To apply a coupon, go to your shopping cart.  There you'll find a 'Coupon code' text box. Enter your coupon code and click 'Apply Coupon'.\",\n  \"targetControlId\": \"My Cart\",\n  \"actionInstruction\": \"Go to your shopping cart to find the coupon code entry.\"\n}\n```\n",
+            "additional_kwargs": {},
+            "response_metadata": {},
+            "type": "ai",
+            "name": null,
+            "id": null,
+            "example": false,
+            "tool_calls": [],
+            "invalid_tool_calls": [],
+            "usage_metadata": null,
+            "metadata": {}
+        },
+        {
+            "content": "How to I add product to my cart?",
+            "additional_kwargs": {},
+            "response_metadata": {},
+            "type": "human",
+            "name": null,
+            "id": null,
+            "example": false,
+            "metadata": {}
+        },
+        {
+            "content": "{\n  \"explanation\": \"To add a product to your cart, locate the product you wish to purchase. Click on the product to get to the product details page. Then, click the 'ADD TO CART' button.\",\n  \"targetControlId\": \"ADD TO CART\",\n  \"actionInstruction\": \"Click the 'ADD TO CART' button on the product details page.\"\n}\n",
+            "additional_kwargs": {},
+            "response_metadata": {},
+            "type": "ai",
+            "name": null,
+            "id": null,
+            "example": false,
+            "tool_calls": [],
+            "invalid_tool_calls": [],
+            "usage_metadata": null,
+            "metadata": {}
+        },
+        {
+            "content": "Where is my cart?",
+            "additional_kwargs": {},
+            "response_metadata": {},
+            "type": "human",
+            "name": null,
+            "id": null,
+            "example": false,
+            "metadata": {}
+        },
+        {
+            "content": "```json\n{\n  \"explanation\": \"Your cart can be accessed by clicking on 'My Cart'.\",\n  \"targetControlId\": \"My Cart\",\n  \"actionInstruction\": \"Click on 'My Cart' to view your shopping cart.\"\n}\n```\n",
+            "additional_kwargs": {},
+            "response_metadata": {},
+            "type": "ai",
+            "name": null,
+            "id": null,
+            "example": false,
+            "tool_calls": [],
+            "invalid_tool_calls": [],
+            "usage_metadata": null,
+            "metadata": {}
+        },
+        {
+            "content": "What is in my cart?",
+            "additional_kwargs": {},
+            "response_metadata": {},
+            "type": "human",
+            "name": null,
+            "id": null,
+            "example": false
+        },
+        {
+            "content": "```json\n{\n  \"explanation\": \"To see the contents of your shopping cart, please click on 'My Cart'.\",\n  \"targetControlId\": \"My Cart\",\n  \"actionInstruction\": \"Click on 'My Cart' to view your cart's contents.\"\n}\n```\n",
+            "additional_kwargs": {},
+            "response_metadata": {},
+            "type": "ai",
+            "name": null,
+            "id": null,
+            "example": false,
+            "tool_calls": [],
+            "invalid_tool_calls": [],
+            "usage_metadata": null
+        }
+    ]
+}
