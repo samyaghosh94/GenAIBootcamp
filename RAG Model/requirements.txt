@@ -1,0 +1,10 @@
+fastapi
+uvicorn
+google-generativeai
+sentence-transformers
+faiss-cpu
+langchain
+tldextract
+beautifulsoup4
+requests
+python-dotenv

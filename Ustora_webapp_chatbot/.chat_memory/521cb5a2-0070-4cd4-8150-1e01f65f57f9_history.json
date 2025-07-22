@@ -1,0 +1,25 @@
+{
+    "messages": [
+        {
+            "content": "Hi, My name is Samya",
+            "additional_kwargs": {},
+            "response_metadata": {},
+            "type": "human",
+            "name": null,
+            "id": null,
+            "example": false
+        },
+        {
+            "content": "```json\n{\n  \"explanation\": \"Hi Samya! Welcome to Ustora.  I'm here to help you.\",\n  \"targetControlId\": \"icon 23\",\n  \"actionInstruction\": \"\"\n}\n```\n",
+            "additional_kwargs": {},
+            "response_metadata": {},
+            "type": "ai",
+            "name": null,
+            "id": null,
+            "example": false,
+            "tool_calls": [],
+            "invalid_tool_calls": [],
+            "usage_metadata": null
+        }
+    ]
+}

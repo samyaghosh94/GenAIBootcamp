@@ -5,7 +5,7 @@ from typing import List
 class GeminiEmbeddings:
     def __init__(self, api_key: str):
         genai.configure(api_key=api_key)
-        self.model = "models/gemini-embedding-exp-03-07"  # Use correct version from Google
+        self.model = "models/text-embedding-004"  # Use correct version from Google
 
     def embed_query(self, text: str) -> List[float]:
         response = genai.embed_content(

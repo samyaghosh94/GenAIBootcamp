@@ -12,9 +12,10 @@ from autogen_agentchat.messages import HandoffMessage, TextMessage, ThoughtEvent
 from autogen_agentchat.agents import AssistantAgent
 from autogen_ext.models.openai import OpenAIChatCompletionClient
 from autogen_core.models import ModelInfo
-from constants import RAG_PROMPT, FEEDBACK_PROMPT, ROUTER_PROMPT
+from constants import RAG_PROMPT, TROUBLESHOOT_PROMPT, ROUTER_PROMPT
 from tools.rag_tool import rag_tool
 from tools.save_feedback_tool import save_feedback_tool
+from tools.error_rag_tool import error_diagnosis_tool
 from dotenv import load_dotenv
 from fastapi.middleware.cors import CORSMiddleware
 load_dotenv()
@@ -50,6 +51,7 @@ def safe_text(content):
 # === Request body ===
 class QueryRequest(BaseModel):
     query: str
+    html_context: Optional[str] = None
     session_id: Optional[str] = None
 
 
@@ -70,7 +72,7 @@ gemini_client = OpenAIChatCompletionClient(
 router_agent = AssistantAgent(
     "router_agent",
     model_client=gemini_client,
-    handoffs=["rag_agent", "feedback_agent", "user"],
+    handoffs=["rag_agent", "troubleshoot_agent", "user"],
     system_message=ROUTER_PROMPT
 )
 
@@ -82,16 +84,16 @@ rag_agent = AssistantAgent(
     system_message=RAG_PROMPT
 )
 
-feedback_agent = AssistantAgent(
-    "feedback_agent",
+troubleshoot_agent = AssistantAgent(
+    "troubleshoot_agent",
     model_client=gemini_client,
-    tools=[save_feedback_tool],  # A custom tool to save to MongoDB
+    tools=[save_feedback_tool, error_diagnosis_tool],  # A custom tool to save to MongoDB
     handoffs=["router_agent", "user"],
-    system_message=FEEDBACK_PROMPT
+    system_message=TROUBLESHOOT_PROMPT
 )
 
 termination = HandoffTermination(target="user")
-team = Swarm([router_agent, rag_agent, feedback_agent], termination_condition=termination)
+team = Swarm([router_agent, rag_agent, troubleshoot_agent], termination_condition=termination)
 
 
 # === Session file I/O ===
@@ -118,16 +120,25 @@ def save_session(session_id: str, last_agent: str, messages: list):
 async def chat_api(body: QueryRequest):
     session_id = body.session_id or str(uuid.uuid4())
     user_query = body.query
+    html_context = body.html_context or ""
 
     session_data = load_session(session_id)
     # last_agent = session_data.get("last_agent", "router_agent")
     last_agent = "router_agent"  # Always start with the router agent for routing
     message_history = session_data.get("messages", [])
 
+    combined_prompt = f"""
+    User Prompt:
+    {user_query}
+
+    User's current screen HTML source:
+    {html_context}
+    """
+
     handoff_task = HandoffMessage(
         source="user",
         target=last_agent,
-        content=user_query
+        content=combined_prompt
     )
 
     last_text = None
@@ -176,3 +187,9 @@ async def chat_api(body: QueryRequest):
 @app.get("/status")
 def status():
     return {"status": "Swarm RAG API is running ✅"}
+
+# i guess samya can judge this but something liek as aobve controllers
+# @app.post("/session/start")
+# async def start_session():
+#     session_id = str(uuid.uuid4())
+#     return JSONResponse(content={"session_id": session_id})

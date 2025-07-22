@@ -38,6 +38,6 @@ def retrieve_context(query: str) -> str:
 
 rag_tool = FunctionTool(
     name="retrieve_context",
-    description="Retrieves relevant context from Ustora's FAQ and shopping database.",
+    description="Retrieves relevant context from HCM Portal User Guide database.",
     func=retrieve_context
 )
