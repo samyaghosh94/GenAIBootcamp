@@ -4,13 +4,15 @@ pydantic
 python-dotenv
 requests
 Pillow
+unstructured
 pymongo[srv]
 # LangChain & Embeddings
 langchain
 langchain-openai
 langchain_unstructured
-
-
+langchain-community
+langchain_unstructured
+google-generativeai
 # AutoGen
 autogen-agentchat
 autogen-core

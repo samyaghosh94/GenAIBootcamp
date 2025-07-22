@@ -57,7 +57,7 @@ def load_error_vectorstore(embeddings, docx_path: str):
     return documents
 
 if __name__ == '__main__':
-    embeddings = GeminiEmbeddings(api_key=os.getenv("EMBEDDING_KEY"))
+    embeddings = GeminiEmbeddings(api_key=os.getenv("GENAI_PLUS"))
     docx_path = ERROR_DOCX_PATH
 
     # Load and save embeddings

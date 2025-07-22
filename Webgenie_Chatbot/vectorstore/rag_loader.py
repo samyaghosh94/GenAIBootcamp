@@ -50,7 +50,7 @@ def load_rag_vectorstore(embeddings, docx_path: str):
 
 
 if __name__ == '__main__':
-    embeddings = GeminiEmbeddings(api_key=os.getenv("EMBEDDING_KEY"))
+    embeddings = GeminiEmbeddings(api_key=os.getenv("GENAI_PLUS"))
     docx_path = DOCX_SOURCE_PATH
 
     # Load and save embeddings

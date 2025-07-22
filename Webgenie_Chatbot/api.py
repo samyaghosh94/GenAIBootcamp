@@ -187,3 +187,9 @@ async def chat_api(body: QueryRequest):
 @app.get("/status")
 def status():
     return {"status": "Swarm RAG API is running ✅"}
+
+# i guess samya can judge this but something liek as aobve controllers
+# @app.post("/session/start")
+# async def start_session():
+#     session_id = str(uuid.uuid4())
+#     return JSONResponse(content={"session_id": session_id})
