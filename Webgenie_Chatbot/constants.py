@@ -127,5 +127,3 @@ Response:
 - Then HAND OFF to the `user`.
 """.strip()
 
-
-
