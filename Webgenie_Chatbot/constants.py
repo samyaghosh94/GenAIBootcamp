@@ -124,6 +124,9 @@ Your responsibilities:
 
 Response:
 - Return the employee data in simple JSON format (NO markdown, NO quotes around it, NO explanation).
+- If any required fields are missing:
+   - Clearly list the missing fields under a `"missing_fields"` key.
+   - Prompt the user to provide the missing information in a clear, friendly message like 
 - Then HAND OFF to the `user`.
 """.strip()
 
