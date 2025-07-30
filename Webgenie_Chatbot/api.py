@@ -3,7 +3,7 @@ import os
 import uuid
 from typing import Optional
 from datetime import datetime, timezone
-from fastapi import FastAPI
+from fastapi import FastAPI, Form, File, UploadFile
 from fastapi.responses import JSONResponse
 from pydantic import BaseModel
 from autogen_agentchat.teams import Swarm
@@ -12,12 +12,14 @@ from autogen_agentchat.messages import HandoffMessage, TextMessage, ThoughtEvent
 from autogen_agentchat.agents import AssistantAgent
 from autogen_ext.models.openai import OpenAIChatCompletionClient
 from autogen_core.models import ModelInfo
-from constants import RAG_PROMPT, TROUBLESHOOT_PROMPT, ROUTER_PROMPT
+from constants import RAG_PROMPT, TROUBLESHOOT_PROMPT, ROUTER_PROMPT, HELPER_PROMPT
 from tools.rag_tool import rag_tool
 from tools.save_feedback_tool import save_feedback_tool
 from tools.error_rag_tool import error_diagnosis_tool
+from tools.msg_extraction_tool import msg_extraction_tool
 from dotenv import load_dotenv
 from fastapi.middleware.cors import CORSMiddleware
+from config import ATTACHMENT_DIR
 load_dotenv()
 
 app = FastAPI()
@@ -47,13 +49,23 @@ def safe_text(content):
     else:
         return str(content).strip()
 
+# === File handling ===
+def save_attachment(file: UploadFile) -> Optional[str]:
+    if file and file.filename.lower().endswith(".msg"):
+        os.makedirs(ATTACHMENT_DIR, exist_ok=True)
+        file_path = os.path.join(ATTACHMENT_DIR, f"{uuid.uuid4()}_{file.filename}")
+        with open(file_path, "wb") as f:
+            f.write(file.file.read())
+        return file_path
+    return None
 
-# === Request body ===
-class QueryRequest(BaseModel):
-    query: str
-    html_context: Optional[str] = None
-    session_id: Optional[str] = None
 
+# # === Request body ===
+# class QueryRequest(BaseModel):
+#     query: str = Form(...),
+#     html_context: Optional[str] = Form(""),
+#     session_id: Optional[str] = Form(None),
+#     attachment: Optional[UploadFile] = File(None)
 
 # === OpenAI / Gemini client ===
 gemini_client = OpenAIChatCompletionClient(
@@ -72,7 +84,7 @@ gemini_client = OpenAIChatCompletionClient(
 router_agent = AssistantAgent(
     "router_agent",
     model_client=gemini_client,
-    handoffs=["rag_agent", "troubleshoot_agent", "user"],
+    handoffs=["rag_agent", "troubleshoot_agent", "helper_agent", "user"],
     system_message=ROUTER_PROMPT
 )
 
@@ -92,8 +104,16 @@ troubleshoot_agent = AssistantAgent(
     system_message=TROUBLESHOOT_PROMPT
 )
 
+helper_agent = AssistantAgent(
+    "helper_agent",
+    model_client=gemini_client,
+    tools=[msg_extraction_tool],
+    handoffs=["rag_agent", "user"],
+    system_message=HELPER_PROMPT
+)
+
 termination = HandoffTermination(target="user")
-team = Swarm([router_agent, rag_agent, troubleshoot_agent], termination_condition=termination)
+team = Swarm([router_agent, rag_agent, troubleshoot_agent, helper_agent], termination_condition=termination)
 
 
 # === Session file I/O ===
@@ -117,28 +137,45 @@ def save_session(session_id: str, last_agent: str, messages: list):
 
 # === Chat endpoint ===
 @app.post("/chat")
-async def chat_api(body: QueryRequest):
-    session_id = body.session_id or str(uuid.uuid4())
-    user_query = body.query
-    html_context = body.html_context or ""
-
+async def chat_api(query: str = Form(...),
+    html_context: Optional[str] = Form(""),
+    session_id: Optional[str] = Form(None),
+    attachment: Optional[UploadFile] = File(None),
+                   ):
+    session_id = session_id or str(uuid.uuid4())
     session_data = load_session(session_id)
     # last_agent = session_data.get("last_agent", "router_agent")
     last_agent = "router_agent"  # Always start with the router agent for routing
     message_history = session_data.get("messages", [])
 
-    combined_prompt = f"""
-    User Prompt:
-    {user_query}
+    # Save file and get path
+    attachment_path = save_attachment(attachment)
+    print("attachment is:", attachment)
+    if attachment:
+        combined_prompt = f"""
+        User Prompt:
+        {query}
+    
+        User's current screen HTML source:
+        {html_context}
+        
+        NOTE: User uploaded a file at {attachment_path}.This may be used for filling forms.
+""".strip()
+    else:
+        combined_prompt = f"""
+                User Prompt:
+                {query}
 
-    User's current screen HTML source:
-    {html_context}
-    """
+                User's current screen HTML source:
+                {html_context}                
+                """.strip()
+
 
     handoff_task = HandoffMessage(
         source="user",
         target=last_agent,
-        content=combined_prompt
+        content=combined_prompt,
+        metadata={"attachment_path": attachment_path} if attachment_path else {}
     )
 
     last_text = None
@@ -156,6 +193,7 @@ async def chat_api(body: QueryRequest):
                 if isinstance(msg, (ThoughtEvent, TextMessage)):
                     if content_str:  # update only if non-empty
                         last_text = content_str
+                        f"[DEBUG] Last text updated: {last_text}"
 
                 if isinstance(msg, HandoffMessage):
                     last_handoff_source = msg.source
@@ -172,12 +210,21 @@ async def chat_api(body: QueryRequest):
         if last_handoff_source:
             save_session(session_id, last_handoff_source, message_history)
 
+            # Attempt to parse the response as JSON
+        # try:
+        #     json_response = json.loads(last_text)
+        #     f"[DEBUG] Parsed JSON response: {json_response}"
+        # except (json.JSONDecodeError, TypeError) as e:
+        #     print(f"[WARN] Could not parse response as JSON: {e}")
+        #     json_response = last_text  # fallback to string if it's not JSON
+
         return {
             "response": last_text or "No relevant response generated.",
             "session_id": session_id
         }
 
     except Exception as e:
+        print(f"[ERROR] Exception during processing: {e}")
         return JSONResponse(
             status_code=500,
             content={"error": str(e), "session_id": session_id}

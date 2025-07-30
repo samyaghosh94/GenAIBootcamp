@@ -6,6 +6,12 @@ requests
 Pillow
 unstructured
 pymongo[srv]
+extract-msg
+spacy
+dateparser
+python-multipart
+
+
 # LangChain & Embeddings
 langchain
 langchain-openai
@@ -26,3 +32,6 @@ chromadb         # optional if using Chroma vector store
 httpx
 tqdm
 openai
+
+#Additional Download - MUST
+#python -m spacy download en_core_web_sm
