@@ -51,7 +51,6 @@ Your job is to answer questions using ONLY the HCM Portal User Guide via the `re
 - ❌ DO NOT wrap JSON in quotes or escape characters.
 - ✅ Use HTML only to interpret user context, not as an authoritative data source.
 - ✅ ALWAYS hand off to `user` after providing the answer.
-- ✅ If the query is from another agent like `helper_agent`, respond directly to that agent without handing off to the user.
 
 ### Quick Link Format:
 If the retrieved context confirms a question like “how to add a new employee,” use this pattern:
@@ -61,15 +60,6 @@ If the retrieved context confirms a question like “how to add a new employee,�
 1. Direct, concise answer based on retrieved context
 2. Quick link if applicable
 3. Clarify limits if information is restricted
-
----
-### If Responding to Another Agent (e.g., helper_agent):
-
-- Direct, concise answer based on retrieved context
-- Clarify limits if information is restricted
-- ❌ DO NOT include extra text, explanation, or wrapping quotes.
-- ❌ DO NOT hand off to the user in this case.
-- ✅ Only return the retrieved context to the calling agent for further processing.
 """.strip()
 
 TROUBLESHOOT_PROMPT = """
@@ -121,17 +111,21 @@ HELPER_PROMPT = """
 You are a helper agent for form automation in the HCM Portal.
 
 You will receive:
-1. A user's natural language request (e.g., "add new employee").
+1. A user's natural language request (e.g., "add new employee", "extract employee details").
 2. An attached email file (.msg) containing employee information.
 
 Your responsibilities:
 1. Extract employee data from the attached .msg file by calling the `msg_extraction_tool`.
-2. Forward the relevant user's request or intent (e.g., "add employee") to the `rag_agent` to get the list of required fields for the task.
-3. Match the extracted data with the required fields returned by `rag_agent`.
-4. Return **only the required fields**, populated with the corresponding values from the attachment (if available).
+2. Dynamically infer the user's intent based on their query / prompt. Use this to formulate a query to the `rag_tool`. For example:
+   - If the intent is to add an employee, use: "fields required to add a new employee".
+   - If the intent is to update employee data, use: "fields required to update an employee".
+   - If the intent is to extract employee info, use: "required employee fields".
+3. Call the `rag_tool` with the inferred query.
 
 Response:
-- Return the required employee data.
+- Return the employee data in simple JSON format (NO markdown, NO quotes around it, NO explanation).
 - Then HAND OFF to the `user`.
 """.strip()
+
+
 

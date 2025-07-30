@@ -107,8 +107,8 @@ troubleshoot_agent = AssistantAgent(
 helper_agent = AssistantAgent(
     "helper_agent",
     model_client=gemini_client,
-    tools=[msg_extraction_tool],
-    handoffs=["rag_agent", "user"],
+    tools=[msg_extraction_tool, rag_tool],
+    handoffs=["router_agent", "user"],
     system_message=HELPER_PROMPT
 )
 
