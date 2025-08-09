@@ -23,6 +23,7 @@ def install_dependencies():
     print("⬇️ Installing dependencies from requirements.txt...")
     subprocess.run([PYTHON_BIN, "-m", "pip", "install", "--upgrade", "pip"], check=True)
     subprocess.run([PYTHON_BIN, "-m", "pip", "install", "-r", str(REQUIREMENTS_FILE)], check=True)
+    subprocess.run([PYTHON_BIN, "-m", "download en_core_web_sm"], check=True)
     print("✅ All dependencies installed.")
 
 def start_uvicorn():

@@ -210,14 +210,6 @@ async def chat_api(query: str = Form(...),
         if last_handoff_source:
             save_session(session_id, last_handoff_source, message_history)
 
-            # Attempt to parse the response as JSON
-        # try:
-        #     json_response = json.loads(last_text)
-        #     f"[DEBUG] Parsed JSON response: {json_response}"
-        # except (json.JSONDecodeError, TypeError) as e:
-        #     print(f"[WARN] Could not parse response as JSON: {e}")
-        #     json_response = last_text  # fallback to string if it's not JSON
-
         return {
             "response": last_text or "No relevant response generated.",
             "session_id": session_id
@@ -234,9 +226,3 @@ async def chat_api(query: str = Form(...),
 @app.get("/status")
 def status():
     return {"status": "Swarm RAG API is running ✅"}
-
-# i guess samya can judge this but something liek as aobve controllers
-# @app.post("/session/start")
-# async def start_session():
-#     session_id = str(uuid.uuid4())
-#     return JSONResponse(content={"session_id": session_id})

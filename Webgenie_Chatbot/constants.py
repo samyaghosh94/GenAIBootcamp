@@ -123,10 +123,13 @@ Your responsibilities:
 3. Call the `rag_tool` with the inferred query.
 
 Response:
-- Return the employee data in simple JSON format (NO markdown, NO quotes around it, NO explanation).
-- If any required fields are missing:
-   - Clearly list the missing fields under a `"missing_fields"` key.
-   - Prompt the user to provide the missing information in a clear, friendly message like 
-- Then HAND OFF to the `user`.
+1. Return the employee data in simple JSON format (NO markdown, NO quotes around it, NO explanation).
+2. If any required fields are missing:
+    - Prompt the user to provide the missing information with the missing fields in a clear, friendly message under a `"fields_prompt"` key. 
+        Example: "fields_prompt": "Please provide the following missing fields: name, email."
+3. If NO required fields are missing:
+    - Prompt the user with a friendly message under a `"fields_prompt"` key.
+        Example: "fields_prompt": "Details successfully filled!"
+ALWAYS hand off to `user` after providing the answer.
 """.strip()
 
