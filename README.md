@@ -1,5 +1,5 @@
 🧠 GenAI Chatbot Flow Overview (Swarm-based)
-This document outlines the architecture and data flow of the intelligent GenAI chatbot that uses screen context, QnA data, and file attachments to assist users via an agent-based system powered by Autogen's Swarm framework, Gemini API, and FastAPI.
+***This document outlines the architecture and data flow of the intelligent GenAI chatbot that uses screen context, QnA data, and file attachments to assist users via an agent-based system powered by Autogen's Swarm framework, Gemini API, and FastAPI.***
 
 🔁 High-Level Chat Flow
 +------------------+
@@ -32,6 +32,9 @@ This document outlines the architecture and data flow of the intelligent GenAI c
      |         |        |
      +-------> Swarm handles routing
                 based on prompt + metadata
+
+<img width="584" height="324" alt="Prompt Flow Diagram" src="https://github.com/user-attachments/assets/819e7815-9941-4afa-8792-de63ed734429" />
+
 
 🤖 Agent Roles and Routing
 | Agent                | Purpose                                                                                                                |
@@ -93,25 +96,26 @@ Message history saved
     ↓
 Return final message to user
 
+<img width="351" height="349" alt="Component Diagram" src="https://github.com/user-attachments/assets/1c35277d-d237-4cd9-9e18-458ab83f22ae" />
+
+
 💡 Detailed Agent Behaviors
-🧭 router_agent
+- 🧭 router_agent:
 Detects intent (feature help, errors, data extraction)
-
 Parses HTML for on-screen error indicators (404, warnings, etc.)
-
 Uses metadata like attachment_path to guide routing
 
-📚 rag_agent
+- 📚 rag_agent:
 Uses retrieve_context to get help articles, navigation links, and answers
 Contextualizes user location from HTML
 Provides concise responses + deep links where applicable
 
-🛠️ troubleshoot_agent
+- 🛠️ troubleshoot_agent:
 Diagnoses functional issues from user message and UI errors
 Detects failed retries using phrase matching (e.g., “still not working”)
 Logs issue feedback if problem persists
 
-📩 helper_agent
+- 📩 helper_agent:
 Parses .msg attachments for structured data
 Cross-checks required fields via rag_tool
 Returns extracted data and prompts user for missing inputs if needed
@@ -129,9 +133,9 @@ Returns extracted data and prompts user for missing inputs if needed
 | `constants.py`                 | System prompts for agents                |
 
 ✅ Design Highlights
-🤖 Multi-agent autonomy: Each agent performs only its intended task
-🔁 Session-aware: Tracks history across multiple user messages
-🧠 Context-aware: Uses screen HTML for better user understanding
-📂 Tool-augmented: Tools handle retrieval, extraction, diagnosis
-⚡ Modular and scalable: Easy to extend with new tools or agents
-🔒 Safe and deterministic: No hallucination, controlled agent behavior
+- 🤖 Multi-agent autonomy: Each agent performs only its intended task
+- 🔁 Session-aware: Tracks history across multiple user messages
+- 🧠 Context-aware: Uses screen HTML for better user understanding
+- 📂 Tool-augmented: Tools handle retrieval, extraction, diagnosis
+- ⚡ Modular and scalable: Easy to extend with new tools or agents
+- 🔒 Safe and deterministic: No hallucination, controlled agent behavior
