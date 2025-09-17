@@ -2,37 +2,6 @@
 ***This document outlines the architecture and data flow of the intelligent GenAI chatbot that uses screen context, QnA data, and file attachments to assist users via an agent-based system powered by Autogen's Swarm framework, Gemini API, and FastAPI.***
 
 🔁 High-Level Chat Flow
-+------------------+
-|   User Input     | ---> POST /chat
-+------------------+
-        |
-        v
-+----------------------------+
-| FastAPI Endpoint (/chat)  |
-| - Accepts query, session  |
-| - Receives HTML + file    |
-+----------------------------+
-        |
-        v
-+----------------------------+
-|  Session Manager           |
-|  - Load chat history       |
-|  - Create or resume session|
-+----------------------------+
-        |
-        v
-+----------------------------+
-|  Router Agent              |
-|  (Detects intent from user |
-|   prompt + screen context) |
-+----------------------------+
-     |         |        |
-     v         v        v
- [rag_agent] [troubleshoot_agent] [helper_agent]
-     |         |        |
-     +-------> Swarm handles routing
-                based on prompt + metadata
-
 <img width="584" height="324" alt="Prompt Flow Diagram" src="https://github.com/user-attachments/assets/819e7815-9941-4afa-8792-de63ed734429" />
 
 
