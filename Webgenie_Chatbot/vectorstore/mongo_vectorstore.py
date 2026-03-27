@@ -1,7 +1,7 @@
 from pymongo import MongoClient
 from typing import List, Optional
 from uuid import uuid4
-from langchain.schema import Document
+from langchain_core.documents import Document
 import os
 from dotenv import load_dotenv
 load_dotenv()

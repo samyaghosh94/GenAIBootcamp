@@ -9,13 +9,13 @@ load_dotenv()
 
 def test_save_and_fetch():
     # Configure Gemini embeddings
-    genai.configure(api_key=os.getenv("EMBEDDING_KEY"))
+    genai.configure(api_key=os.getenv("GENAI_PLUS"))
 
     sample_text = "This is a test document about HCM portal."
 
     # Embed the sample text
     response = genai.embed_content(
-        model="models/text-embedding-004",  # Make sure this is the correct model
+        model="models/gemini-embedding-001",  # Make sure this is the correct model
         content=sample_text,
         task_type="retrieval_document"  # or "semantic_similarity" depending on use
     )
