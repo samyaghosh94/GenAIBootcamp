@@ -1,0 +1,14 @@
+[
+    {
+        "question": "What should I do if I get error adding employee?",
+        "ground_truth": "If you encounter an error when adding an employee, first verify that all required fields are filled in correctly (name, email, department, etc.). Check if the email address is already in use. Ensure you have the necessary permissions to add employees. Clear your browser cache and try again. If the error persists, contact your system administrator with the error message."
+    },
+    {
+        "question": "What should I do if I get error adding leave request?",
+        "ground_truth": "When encountering an error while adding a leave request, ensure you have sufficient leave balance for the requested dates. Verify that the dates are in the correct format and that the end date is after the start date. Check that you are within the leave request submission window. If the problem continues, contact HR support."
+    },
+    {
+        "question": "What should I do if page not updating?",
+        "ground_truth": "If the page is not updating, try refreshing the browser (F5 or Ctrl+R). Clear your browser cache and cookies. Log out completely and log back in. Try using a different browser or an incognito/private window. Check your internet connection. If the issue persists, it may be a server-side issue - contact technical support."
+    }
+]

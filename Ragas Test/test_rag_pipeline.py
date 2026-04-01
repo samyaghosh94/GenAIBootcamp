@@ -10,9 +10,9 @@ import asyncio
 
 from langchain_google_genai import ChatGoogleGenerativeAI, GoogleGenerativeAIEmbeddings
 
-# Set tiktoken cache directory before importing anything that uses it
-os.environ["TIKTOKEN_CACHE_DIR"] = os.path.join(os.getcwd(), ".tiktoken_cache")
-os.makedirs(os.environ["TIKTOKEN_CACHE_DIR"], exist_ok=True)
+# # Set tiktoken cache directory before importing anything that uses it
+# os.environ["TIKTOKEN_CACHE_DIR"] = os.path.join(os.getcwd(), ".tiktoken_cache")
+# os.makedirs(os.environ["TIKTOKEN_CACHE_DIR"], exist_ok=True)
 
 from langchain_openai import ChatOpenAI
 from dotenv import load_dotenv
@@ -25,17 +25,9 @@ from ragas.metrics import (
     AnswerRelevancy,
     ContextPrecision,
     ContextRecall,
-    ContextEntityRecall
+    ContextEntityRecall,
+    AnswerSimilarity
 )
-
-# Pre-cache tiktoken encoding to avoid network issues
-# try:
-#     import tiktoken
-#     print("🔄 Pre-caching tiktoken encoding...")
-#     encoding = tiktoken.get_encoding("cl100k_base")
-#     print("✅ Tiktoken encoding cached successfully")
-# except Exception as e:
-#     print(f"⚠️  Tiktoken pre-caching issue (may retry): {e}")
 
 load_dotenv()
 
@@ -45,7 +37,8 @@ llm = ChatGoogleGenerativeAI(
     model="gemini-2.5-flash",
     temperature=0.0,
     google_api_key=os.getenv("GENAI_PLUS"),
-    convert_system_message_to_human=True
+    convert_system_message_to_human=True,
+    n=1
 )
 
 # llm = ChatOpenAI(
@@ -127,7 +120,7 @@ async def run_rag_evaluation(questions_file):
                 print(f"\n📝 Processing query: '{query}'")
                 
                 # Get RAG response
-                response, docs = rag_pipeline(query, temperature=0.0, top_k=3)
+                response, docs = rag_pipeline(query, temperature=0.0, top_k=3) # Increase top_K value if the context recall is low
                 contexts = [doc.page_content for doc in docs]
 
                 # Debug checks
@@ -145,6 +138,10 @@ async def run_rag_evaluation(questions_file):
                     "contexts": contexts,
                 })
                 print(f"Eval result: {eval_data}")
+
+                # Save eval_data into a file
+                with open("final_eval_data.json", "w") as f:
+                    f.write(json.dumps(eval_data, indent=2))
                 
                 # Add small delay to avoid rate limits
                 await asyncio.sleep(60)
@@ -167,12 +164,11 @@ async def run_rag_evaluation(questions_file):
                 ContextRecall(),
                 # ContextEntityRecall(),
             ],
-            llm=llm,  # ✅ REQUIRED - OpenAI LLM
-            embeddings=embedding_model,
-            # embeddings=embeddings,  # ✅ REQUIRED - OpenAI Embeddings from rag_pipeline
+            llm=llm,  # ✅ REQUIRED - Custom LLMs
+            embeddings=embedding_model,  # ✅ REQUIRED - Custom Embeddings from rag_pipeline
             run_config=RunConfig(
-                timeout=120,  # seconds
-                max_workers=1
+                timeout=120,  # Sets a timeout for each evaluation task (per metric/sample)
+                max_workers=1 # Controls parallelization -limits to 1 concurrent worker thread
             )
         )
 
@@ -188,10 +184,8 @@ async def run_rag_evaluation(questions_file):
             pass
 
         # Save results
-        with open("ragas_results.json", "w") as f:
-            json.dump(eval_data, f, indent=2)
-
-        print("\n✅ Results saved to ragas_results.json")
+        with open("final_eval_data.json", "w") as f:
+            json.dump(result, f, indent=2)
         
         return result
 
@@ -199,46 +193,6 @@ async def run_rag_evaluation(questions_file):
         print(f"✗ Evaluation failed: {e}")
         traceback.print_exc()
         return None
-
-# def test_rag_pipeline(questions_file):
-#     """Test the complete RAG pipeline"""
-#     try:
-#         eval_data = []
-#
-#         # Create a sample query
-#         # query = "What should I do if I get error adding employee?"
-#         if not Path(questions_file).exists():
-#             print(f"❌ Questions file not found: {questions_file}")
-#         with open(questions_file, 'r', encoding='utf-8') as f:
-#             data = json.load(f)
-#         if isinstance(data, list):
-#             for item in data:
-#                 if isinstance(item, dict):
-#                     query = item["question"]
-#                     print(f"\n📝 Testing RAG pipeline with query: '{query}'")
-#                     response, docs = rag_pipeline(query, temperature=0.0, top_k=3)
-#                     eval_data.append({
-#                         "question": query,
-#                         "ground_truth": item["ground_truth"],
-#                         "answer": response,
-#                         "contexts": [doc.page_content for doc in docs],
-#                         "reference_contexts": item["contexts"]
-#                     })
-#                     time.sleep(15)
-#         print(f"  Response: {response[:100]}...")
-#         print(f"  Retrieved documents: {len(docs)}")
-#         print(f"Final Evaluation Dataset: {eval_data}")
-#
-#         eval_dataset = Dataset.from_list(eval_data)
-#
-#
-#         print(f"✓ RAG pipeline executed successfully")
-#         return True
-#     except Exception as e:
-#         print(f"✗ RAG pipeline test failed: {e}")
-#         print("  Note: This may fail if no documents are indexed yet.")
-#         print("  Run example_usage.py first to create the vector store.")
-#         return False
 
 
 def test_setup():
@@ -270,5 +224,5 @@ def test_setup():
 
 
 if __name__ == "__main__":
-    print(test_setup())
+    # print(test_setup())
     print(asyncio.run(run_rag_evaluation("./Data/questions.json")))

@@ -18,6 +18,13 @@ load_dotenv()
 #     google_api_key=os.getenv("GENAI_PLUS"),
 #     convert_system_message_to_human=True
 # )
+llm = ChatGoogleGenerativeAI(
+    model="gemini-2.5-flash",
+    temperature=0.0,
+    google_api_key=os.getenv("GENAI_PLUS"),
+    convert_system_message_to_human=True,
+    n=1
+)
 
 embedding_model = GoogleGenerativeAIEmbeddings(
     model="models/embedding-001",  # Use stable embedding model
