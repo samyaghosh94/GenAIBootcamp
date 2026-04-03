@@ -8,4 +8,7 @@ faiss-cpu
 ragas
 datasets
 openai
+transformers
+torch
+tiktoken
 
