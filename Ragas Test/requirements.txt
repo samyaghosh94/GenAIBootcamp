@@ -1,0 +1,14 @@
+langchain-core
+langchain-google-genai
+langchain-community
+langchain
+python-dotenv
+google-generativeai
+faiss-cpu
+ragas
+datasets
+openai
+transformers
+torch
+tiktoken
+
